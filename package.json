@@ -1,0 +1,15 @@
+{
+  "name": "causalfunnel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "lint": "echo \"stub: lint\"",
+    "typecheck": "echo \"stub: typecheck\"",
+    "test": "echo \"stub: test\""
+  }
+}

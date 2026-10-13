@@ -10,7 +10,7 @@
     "dashboard"
   ],
   "scripts": {
-    "check": "npm run lint && npm run typecheck && npm run test",
+    "check": "npm run lint && npm run typecheck && prettier --check . && npm run test",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "npm run --workspaces --if-present typecheck",

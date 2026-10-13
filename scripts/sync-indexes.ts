@@ -6,7 +6,9 @@ async function main() {
   process.stdout.write(`Connecting to MongoDB at ${mongoUrl}...\n`);
   const db = await connectDb(mongoUrl);
   const indexNames = await syncIndexes(db);
-  process.stdout.write(`Successfully synced indexes: ${indexNames.join(', ')}\n`);
+  process.stdout.write(
+    `Successfully synced indexes: ${indexNames.join(', ')}\n`,
+  );
   await closeDb();
 }
 

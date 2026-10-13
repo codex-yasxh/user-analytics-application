@@ -22,4 +22,6 @@ const content = readFileSync(outfile);
 const rawSize = statSync(outfile).size;
 const gzipSize = gzipSync(content).length;
 
-process.stdout.write(`Tracker build: ${outfile} (${rawSize} bytes, gzip: ${gzipSize} bytes)\n`);
+process.stdout.write(
+  `Tracker build: ${outfile} (${rawSize} bytes, gzip: ${gzipSize} bytes)\n`,
+);

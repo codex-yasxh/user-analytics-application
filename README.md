@@ -13,7 +13,7 @@ The walking skeleton is live:
 - **Hosted API Health:** [https://user-analytics-application-causalfunnel.onrender.com/health](https://user-analytics-application-causalfunnel.onrender.com/health)
 - **Hosted API Readiness:** [https://user-analytics-application-causalfunnel.onrender.com/ready](https://user-analytics-application-causalfunnel.onrender.com/ready)
 
-> *Note: Hosted API runs on Render; initial wake from cold start may take up to 60 seconds.*
+> _Note: Hosted API runs on Render; initial wake from cold start may take up to 60 seconds._
 
 ## Run Locally
 
@@ -25,17 +25,20 @@ The walking skeleton is live:
 ### Quick Start
 
 1. Set up environment variables and install dependencies:
+
    ```bash
    cp .env.example .env
    npm install
    ```
 
 2. Start the local database:
+
    ```bash
    npm run db:up
    ```
 
 3. Launch server, dashboard, and tracker build watcher concurrently:
+
    ```bash
    npm run dev
    ```

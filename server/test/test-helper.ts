@@ -18,8 +18,11 @@ export interface TestServerInstance {
   cleanup: () => Promise<void>;
 }
 
-export async function startTestServer(configOverrides: Partial<Config> = {}): Promise<TestServerInstance> {
-  const mongoUrlBase = process.env.MONGO_URL_TEST || 'mongodb://localhost:27017';
+export async function startTestServer(
+  configOverrides: Partial<Config> = {},
+): Promise<TestServerInstance> {
+  const mongoUrlBase =
+    process.env.MONGO_URL_TEST || 'mongodb://localhost:27017';
   const dbName = `cf_test_${crypto.randomUUID().replace(/-/g, '').slice(0, 10)}`;
   const mongoUrl = `${mongoUrlBase.replace(/\/$/, '')}/${dbName}`;
 

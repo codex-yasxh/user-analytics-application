@@ -11,7 +11,10 @@ export interface EventsRouterOptions {
   config: Config;
 }
 
-export function createEventsRouter({ db, config }: EventsRouterOptions): Router {
+export function createEventsRouter({
+  db,
+  config,
+}: EventsRouterOptions): Router {
   const router = Router();
 
   const limiter = config.RATE_LIMIT_ENABLED
@@ -92,19 +95,28 @@ export function createEventsRouter({ db, config }: EventsRouterOptions): Router 
       }
 
       try {
-        const result = await db.collection('events').insertMany(docs as unknown as Document[], { ordered: false });
+        const result = await db
+          .collection('events')
+          .insertMany(docs as unknown as Document[], { ordered: false });
         res.status(202).json({
           accepted: result.insertedCount,
           duplicates: 0,
           rejected: validationRejected,
         });
       } catch (err: unknown) {
-        if (err instanceof MongoBulkWriteError || (err && typeof err === 'object' && (err as { name?: string }).name === 'MongoBulkWriteError')) {
+        if (
+          err instanceof MongoBulkWriteError ||
+          (err &&
+            typeof err === 'object' &&
+            (err as { name?: string }).name === 'MongoBulkWriteError')
+        ) {
           const bulkError = err as MongoBulkWriteError;
           const accepted = bulkError.result?.insertedCount ?? 0;
           let duplicates = 0;
           let writeErrorsCount = 0;
-          const writeErrors = Array.isArray(bulkError.writeErrors) ? bulkError.writeErrors : [];
+          const writeErrors = Array.isArray(bulkError.writeErrors)
+            ? bulkError.writeErrors
+            : [];
 
           for (const writeError of writeErrors) {
             if (writeError.code === 11000) {

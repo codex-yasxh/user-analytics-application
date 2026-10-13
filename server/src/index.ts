@@ -36,7 +36,10 @@ if (process.env.NODE_ENV !== 'test') {
       logger.info('Connected to MongoDB on startup');
       const app = createApp({ db, config });
       server = app.listen(config.PORT, () => {
-        logger.info({ port: config.PORT }, `Server listening on port ${config.PORT}`);
+        logger.info(
+          { port: config.PORT },
+          `Server listening on port ${config.PORT}`,
+        );
       });
     } catch (err) {
       logger.error({ err }, 'Failed to start server');

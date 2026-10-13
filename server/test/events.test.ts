@@ -210,7 +210,10 @@ describe('Events ingestion endpoint', () => {
   it('when INGEST_ENABLED is false returns 503 INGEST_DISABLED', async () => {
     const disabledServer = await startTestServer({ INGEST_ENABLED: false });
     try {
-      const raw = readFileSync(resolve(fixturesDir, 'batch-valid.json'), 'utf-8');
+      const raw = readFileSync(
+        resolve(fixturesDir, 'batch-valid.json'),
+        'utf-8',
+      );
       const res = await fetch(`${disabledServer.baseUrl}/api/events`, {
         method: 'POST',
         headers: {
@@ -233,7 +236,10 @@ describe('Events ingestion endpoint', () => {
   });
 
   it('rate limiting uses distinct buckets per X-Forwarded-For IP address', async () => {
-    const limitedServer = await startTestServer({ RATE_LIMIT_ENABLED: true, RATE_LIMIT_MAX: 1 });
+    const limitedServer = await startTestServer({
+      RATE_LIMIT_ENABLED: true,
+      RATE_LIMIT_MAX: 1,
+    });
     try {
       const payloadA = JSON.stringify({
         events: [

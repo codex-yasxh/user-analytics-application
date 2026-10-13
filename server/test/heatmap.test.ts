@@ -102,15 +102,16 @@ describe('GET /api/heatmap', () => {
     expect(invalidBody.error.code).toBe('INVALID_PATH');
   });
 
-  it('normalizes trailing slash so path/ matches path', async () => {
+  it('normalizes trailing slash and query string so path/?utm=1 matches normalized stored path', async () => {
     const res = await fetch(
-      `${instance.baseUrl}/api/heatmap?path=${encodeURIComponent(`${testPath}/`)}`,
+      `${instance.baseUrl}/api/heatmap?path=${encodeURIComponent(`${testPath}/?utm_source=ad#section`)}`,
     );
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.path).toBe(testPath);
     expect(body.total).toBe(2);
     expect(body.returned).toBe(2);
+    expect(body.points.length).toBe(2);
   });
 
   it('returns desktop clicks newest first by default with correct reference width', async () => {

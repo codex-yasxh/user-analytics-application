@@ -108,7 +108,7 @@ export function createApp({ db, config }: AppOptions): Express {
   app.use(createSessionsRouter({ db }));
 
   // Pages router
-  app.use(createPagesRouter({ db }));
+  app.use(createPagesRouter({ db, config }));
 
   // Heatmap router
   app.use(createHeatmapRouter({ db }));

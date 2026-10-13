@@ -19,6 +19,7 @@ const configSchema = z.object({
       if (typeof val === 'boolean') return val;
       return val === 'true' || val === '1';
     }),
+  PAGES_LIMIT: z.coerce.number().int().positive().default(100),
   LOG_LEVEL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default('info'),
@@ -26,13 +27,17 @@ const configSchema = z.object({
 
 export type Config = z.infer<typeof configSchema>;
 
-export function loadConfig(env: Record<string, string | undefined> = process.env): Config {
+export function loadConfig(
+  env: Record<string, string | undefined> = process.env,
+): Config {
   const result = configSchema.safeParse(env);
   if (!result.success) {
     const formattedErrors = result.error.issues
       .map((issue) => `  - ${issue.path.join('.') || 'env'}: ${issue.message}`)
       .join('\n');
-    process.stderr.write(`Configuration error: Invalid environment configuration\n${formattedErrors}\n`);
+    process.stderr.write(
+      `Configuration error: Invalid environment configuration\n${formattedErrors}\n`,
+    );
     process.exit(1);
   }
   return result.data;

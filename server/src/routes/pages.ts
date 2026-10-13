@@ -3,10 +3,12 @@ import { type Db } from 'mongodb';
 
 export interface PagesRouterOptions {
   db: Db;
+  config?: { PAGES_LIMIT: number };
 }
 
-export function createPagesRouter({ db }: PagesRouterOptions): Router {
+export function createPagesRouter({ db, config }: PagesRouterOptions): Router {
   const router = Router();
+  const limit = config?.PAGES_LIMIT ?? 100;
 
   router.get('/api/pages', async (_req: Request, res: Response) => {
     const results = await db
@@ -24,6 +26,7 @@ export function createPagesRouter({ db }: PagesRouterOptions): Router {
           },
         },
         { $sort: { clicks: -1, _id: 1 } },
+        { $limit: limit },
       ])
       .toArray();
 

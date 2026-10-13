@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 const configSchema = z.object({
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
   MONGO_URL: z.string().min(1, 'MONGO_URL is required and cannot be empty'),
   DASHBOARD_ORIGIN: z.string().default('http://localhost:5173'),

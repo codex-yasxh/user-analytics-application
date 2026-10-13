@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import { type Db } from 'mongodb';
-import { SESSIONS_LIMIT_MAX } from '@cf/shared';
+import { z } from 'zod';
+import { JOURNEY_CAP, SESSIONS_LIMIT_MAX } from '@cf/shared';
 
 export interface SessionsRouterOptions {
   db: Db;
@@ -62,6 +63,50 @@ export function createSessionsRouter({ db }: SessionsRouterOptions): Router {
       limit,
     });
   });
+
+  router.get(
+    '/api/sessions/:id/events',
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const parsed = z.uuid().safeParse(id);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: {
+            code: 'INVALID_SESSION_ID',
+            message: 'Invalid session ID format. Expected a valid UUID v4.',
+          },
+        });
+        return;
+      }
+
+      const docs = await db
+        .collection('events')
+        .find({ session_id: id })
+        .project({ _id: 0 })
+        .sort({ ts: 1, _id: 1 })
+        .limit(JOURNEY_CAP + 1)
+        .toArray();
+
+      if (docs.length === 0) {
+        res.status(404).json({
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Session not found',
+          },
+        });
+        return;
+      }
+
+      const truncated = docs.length > JOURNEY_CAP;
+      const events = truncated ? docs.slice(0, JOURNEY_CAP) : docs;
+
+      res.status(200).json({
+        session_id: id,
+        events,
+        truncated,
+      });
+    },
+  );
 
   return router;
 }

@@ -233,9 +233,9 @@ describe('Events ingestion endpoint', () => {
   });
 
   it('rate limiting uses distinct buckets per X-Forwarded-For IP address', async () => {
-    const limitedServer = await startTestServer({ RATE_LIMIT_ENABLED: true });
+    const limitedServer = await startTestServer({ RATE_LIMIT_ENABLED: true, RATE_LIMIT_MAX: 1 });
     try {
-      const validPayload = JSON.stringify({
+      const payloadA = JSON.stringify({
         events: [
           {
             eid: 'f1e2d3c4-b5a6-4978-8123-456789abcdef',
@@ -248,30 +248,54 @@ describe('Events ingestion endpoint', () => {
         ],
       });
 
-      // Request from IP A
-      const resA = await fetch(`${limitedServer.baseUrl}/api/events`, {
+      // Request 1 from IP A: succeeds within limit
+      const resA1 = await fetch(`${limitedServer.baseUrl}/api/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Forwarded-For': '198.51.100.10',
         },
-        body: validPayload,
+        body: payloadA,
       });
-      expect(resA.status).toBe(202);
+      expect(resA1.status).toBe(202);
 
-      // Request from IP B
+      // Request 2 from IP A: exceeds limit of 1
+      const resA2 = await fetch(`${limitedServer.baseUrl}/api/events`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Forwarded-For': '198.51.100.10',
+        },
+        body: payloadA,
+      });
+      expect(resA2.status).toBe(429);
+      const bodyA2 = await resA2.json();
+      expect(bodyA2.error.code).toBe('RATE_LIMIT_EXCEEDED');
+
+      // Request 1 from IP B: succeeds in its own separate bucket
+      const payloadB = JSON.stringify({
+        events: [
+          {
+            eid: 'a1e2d3c4-b5a6-4978-8123-456789abcdef',
+            session_id: 'b7c1e5a2-3d94-4f06-8b2a-9e1d7c3a5f48',
+            type: 'page_view',
+            url: 'https://demo.example.com/',
+            vw: 1280,
+            vh: 800,
+          },
+        ],
+      });
       const resB = await fetch(`${limitedServer.baseUrl}/api/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Forwarded-For': '203.0.113.50',
         },
-        body: validPayload,
+        body: payloadB,
       });
-      // Second request has duplicate eid so it responds 202 with duplicates: 1, not rate limited
       expect(resB.status).toBe(202);
       const bodyB = await resB.json();
-      expect(bodyB.duplicates).toBe(1);
+      expect(bodyB.accepted).toBe(1);
     } finally {
       await limitedServer.cleanup();
     }

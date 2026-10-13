@@ -11,6 +11,7 @@ const configSchema = z.object({
       if (typeof val === 'boolean') return val;
       return val === 'true' || val === '1';
     }),
+  RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   INGEST_ENABLED: z
     .union([z.boolean(), z.string()])
     .default('true')

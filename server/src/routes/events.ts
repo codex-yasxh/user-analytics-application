@@ -2,7 +2,7 @@ import cors from 'cors';
 import express, { type Request, type Response, Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { MongoBulkWriteError, type Db, type Document } from 'mongodb';
-import { BODY_LIMIT, batchEnvelopeSchema } from '@cf/shared';
+import { BODY_LIMIT, MAX_BATCH, batchEnvelopeSchema } from '@cf/shared';
 import { buildDocs } from '../services/build-docs.js';
 import type { Config } from '../config.js';
 
@@ -17,7 +17,7 @@ export function createEventsRouter({ db, config }: EventsRouterOptions): Router 
   const limiter = config.RATE_LIMIT_ENABLED
     ? rateLimit({
         windowMs: 60 * 1000,
-        limit: 120,
+        limit: config.RATE_LIMIT_MAX,
         standardHeaders: true,
         legacyHeaders: false,
         handler: (_req, res) => {
@@ -70,7 +70,7 @@ export function createEventsRouter({ db, config }: EventsRouterOptions): Router 
         res.status(400).json({
           error: {
             code: 'BAD_REQUEST',
-            message: 'Invalid batch envelope. Expected { events: [1..50] }',
+            message: `Invalid batch envelope. Expected { events: [1..${MAX_BATCH}] }`,
           },
         });
         return;

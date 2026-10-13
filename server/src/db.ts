@@ -34,6 +34,10 @@ export async function connectDb(mongoUrl: string): Promise<Db> {
   return db;
 }
 
+export function setDb(database: Db): void {
+  db = database;
+}
+
 export function getDb(): Db {
   if (!db) {
     throw new Error('Database not initialized. Call connectDb first.');

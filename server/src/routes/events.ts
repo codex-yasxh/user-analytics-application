@@ -7,11 +7,13 @@ import { getDb } from '../db.js';
 
 export const eventsRouter = Router();
 
-eventsRouter.use(cors({ origin: '*' }));
-eventsRouter.use(express.text({ type: 'text/plain', limit: '100kb' }));
-eventsRouter.use(express.json({ limit: '100kb' }));
-
-eventsRouter.post('/api/events', async (req, res) => {
+eventsRouter.options('/api/events', cors({ origin: '*' }));
+eventsRouter.post(
+  '/api/events',
+  cors({ origin: '*' }),
+  express.text({ type: 'text/plain', limit: '100kb' }),
+  express.json({ limit: '100kb' }),
+  async (req, res) => {
   let payload = req.body;
   if (typeof payload === 'string') {
     try {

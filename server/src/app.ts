@@ -7,7 +7,7 @@ import { pino } from 'pino';
 import { pinoHttp } from 'pino-http';
 import type { Config } from './config.js';
 import { setDb } from './db.js';
-import { eventsRouter } from './routes/events.js';
+import { createEventsRouter } from './routes/events.js';
 
 export interface AppOptions {
   db: Db;
@@ -93,7 +93,7 @@ export function createApp({ db, config }: AppOptions): Express {
   });
 
   // Events ingest router
-  app.use(eventsRouter);
+  app.use(createEventsRouter({ db, config }));
 
   // Central 404 handler (JSON error shape)
   app.use((_req: Request, res: Response) => {

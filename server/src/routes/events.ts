@@ -1,59 +1,136 @@
-// THROWAWAY: replaced by the real ingest route
 import cors from 'cors';
-import { Router } from 'express';
-import express from 'express';
-import { normalizePath } from '@cf/shared';
-import { getDb } from '../db.js';
+import express, { type Request, type Response, Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import { MongoBulkWriteError, type Db, type Document } from 'mongodb';
+import { BODY_LIMIT, batchEnvelopeSchema } from '@cf/shared';
+import { buildDocs } from '../services/build-docs.js';
+import type { Config } from '../config.js';
 
-export const eventsRouter = Router();
+export interface EventsRouterOptions {
+  db: Db;
+  config: Config;
+}
 
-eventsRouter.options('/api/events', cors({ origin: '*' }));
-eventsRouter.post(
-  '/api/events',
-  cors({ origin: '*' }),
-  express.text({ type: 'text/plain', limit: '100kb' }),
-  express.json({ limit: '100kb' }),
-  async (req, res) => {
-  let payload = req.body;
-  if (typeof payload === 'string') {
-    try {
-      payload = JSON.parse(payload);
-    } catch {
-      res.status(400).json({ error: { code: 'BAD_REQUEST', message: 'Invalid JSON payload' } });
-      return;
-    }
-  }
+export function createEventsRouter({ db, config }: EventsRouterOptions): Router {
+  const router = Router();
 
-  const rawEvents = Array.isArray(payload?.events) ? payload.events : [];
-  const receivedAt = new Date();
+  const limiter = config.RATE_LIMIT_ENABLED
+    ? rateLimit({
+        windowMs: 60 * 1000,
+        limit: 120,
+        standardHeaders: true,
+        legacyHeaders: false,
+        handler: (_req, res) => {
+          res.status(429).json({
+            error: {
+              code: 'RATE_LIMIT_EXCEEDED',
+              message: 'Rate limit exceeded, please retry later',
+            },
+          });
+        },
+      })
+    : (_req: Request, _res: Response, next: () => void) => next();
 
-  interface RawEvent {
-    url?: string;
-    [key: string]: unknown;
-  }
+  router.options('/api/events', cors({ origin: '*' }));
 
-  const docs = rawEvents.map((raw: unknown) => {
-    const event = (raw && typeof raw === 'object' ? raw : {}) as RawEvent;
-    let path = typeof event.url === 'string' ? event.url : '';
-    if (typeof event.url === 'string') {
-      try {
-        path = normalizePath(event.url);
-      } catch {
-        path = event.url;
+  router.post(
+    '/api/events',
+    cors({ origin: '*' }),
+    limiter,
+    express.text({ type: 'text/plain', limit: BODY_LIMIT }),
+    express.json({ limit: BODY_LIMIT }),
+    async (req: Request, res: Response) => {
+      if (!config.INGEST_ENABLED) {
+        res.status(503).json({
+          error: {
+            code: 'INGEST_DISABLED',
+            message: 'Event ingestion is currently disabled',
+          },
+        });
+        return;
       }
-    }
-    return {
-      ...event,
-      path,
-      received_at: receivedAt,
-      src: 'live',
-    };
-  });
 
-  if (docs.length > 0) {
-    const db = getDb();
-    await db.collection('events').insertMany(docs, { ordered: false });
-  }
+      let payload = req.body;
+      if (typeof payload === 'string') {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          res.status(400).json({
+            error: {
+              code: 'BAD_REQUEST',
+              message: 'Invalid JSON payload in request body',
+            },
+          });
+          return;
+        }
+      }
 
-  res.status(202).json({ accepted: docs.length });
-});
+      const envelopeResult = batchEnvelopeSchema.safeParse(payload);
+      if (!envelopeResult.success) {
+        res.status(400).json({
+          error: {
+            code: 'BAD_REQUEST',
+            message: 'Invalid batch envelope. Expected { events: [1..50] }',
+          },
+        });
+        return;
+      }
+
+      const receivedAt = new Date();
+      const { docs, rejected: validationRejected } = buildDocs(
+        envelopeResult.data.events,
+        receivedAt,
+      );
+
+      if (docs.length === 0) {
+        res.status(202).json({
+          accepted: 0,
+          duplicates: 0,
+          rejected: validationRejected,
+        });
+        return;
+      }
+
+      try {
+        const result = await db.collection('events').insertMany(docs as unknown as Document[], { ordered: false });
+        res.status(202).json({
+          accepted: result.insertedCount,
+          duplicates: 0,
+          rejected: validationRejected,
+        });
+      } catch (err: unknown) {
+        if (err instanceof MongoBulkWriteError || (err && typeof err === 'object' && (err as { name?: string }).name === 'MongoBulkWriteError')) {
+          const bulkError = err as MongoBulkWriteError;
+          const accepted = bulkError.result?.insertedCount ?? 0;
+          let duplicates = 0;
+          let writeErrorsCount = 0;
+          const writeErrors = Array.isArray(bulkError.writeErrors) ? bulkError.writeErrors : [];
+
+          for (const writeError of writeErrors) {
+            if (writeError.code === 11000) {
+              duplicates += 1;
+            } else {
+              writeErrorsCount += 1;
+            }
+          }
+
+          res.status(202).json({
+            accepted,
+            duplicates,
+            rejected: validationRejected + writeErrorsCount,
+          });
+          return;
+        }
+
+        res.status(503).json({
+          error: {
+            code: 'DATABASE_UNAVAILABLE',
+            message: 'Database unavailable for write',
+          },
+        });
+      }
+    },
+  );
+
+  return router;
+}

@@ -13,6 +13,7 @@
     "@cf/shared": "*",
     "cors": "2.8.5",
     "express": "5.0.1",
+    "express-rate-limit": "8.7.1",
     "helmet": "8.0.0",
     "mongodb": "7.7.0",
     "pino": "9.6.0",

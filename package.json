@@ -10,8 +10,8 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "echo \"stub: typecheck\"",
-    "test": "echo \"stub: test\""
+    "typecheck": "npm run --workspaces --if-present typecheck",
+    "test": "npm run --workspaces --if-present test"
   },
   "devDependencies": {
     "@rolldown/binding-win32-x64-msvc": "1.2.13",

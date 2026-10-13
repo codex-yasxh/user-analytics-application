@@ -1,0 +1,35 @@
+{
+  "events": [
+    {
+      "eid": "c0a8f3d2-5b1e-4c7a-9d3f-2e8b6a4c1f07",
+      "session_id": "b7c1e5a2-3d94-4f06-8b2a-9e1d7c3a5f48",
+      "type": "page_view",
+      "url": "https://demo.example.com/",
+      "ts": "2026-10-13T06:10:00.000Z",
+      "vw": 390,
+      "vh": 844
+    },
+    {
+      "eid": "d1b9a4e3-6c2f-4d8b-ae40-3f9c7b5d2a18",
+      "session_id": "b7c1e5a2-3d94-4f06-8b2a-9e1d7c3a5f48",
+      "type": "click",
+      "url": "https://demo.example.com/",
+      "ts": "2026-10-13T06:10:03.000Z",
+      "vw": 390,
+      "vh": 844,
+      "x": 195,
+      "y": 300,
+      "doc_w": 390,
+      "doc_h": 2100,
+      "sel": "nav.menu"
+    },
+    {
+      "eid": "e2cab5f4-7d30-4e9c-b051-4a0d8c6e3b29",
+      "session_id": "b7c1e5a2-3d94-4f06-8b2a-9e1d7c3a5f48",
+      "type": "hover",
+      "url": "javascript:alert(1)",
+      "ts": "2026-10-13T06:10:04.000Z",
+      "vh": 844
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "session_id": "a81f2943-6c0d-4b5e-9f27-3d1c8e5a7b90",
+  "events": [
+    {
+      "eid": "3f2b8c1e-9d4a-4e7b-8a1c-5d6e7f8091a2",
+      "session_id": "a81f2943-6c0d-4b5e-9f27-3d1c8e5a7b90",
+      "type": "page_view",
+      "url": "https://demo.example.com/products?utm_source=ad#top",
+      "path": "https://demo.example.com/products",
+      "ts": "2026-10-13T06:00:00.000Z",
+      "received_at": "2026-10-13T06:00:01.000Z",
+      "src": "live",
+      "vw": 1280,
+      "vh": 800,
+      "vw_bucket": "desktop"
+    },
+    {
+      "eid": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "session_id": "a81f2943-6c0d-4b5e-9f27-3d1c8e5a7b90",
+      "type": "click",
+      "url": "https://demo.example.com/products?utm_source=ad#top",
+      "path": "https://demo.example.com/products",
+      "ts": "2026-10-13T06:00:05.000Z",
+      "received_at": "2026-10-13T06:00:06.000Z",
+      "src": "live",
+      "vw": 1280,
+      "vh": 800,
+      "vw_bucket": "desktop",
+      "x": 640,
+      "y": 912,
+      "doc_w": 1280,
+      "doc_h": 2400,
+      "sel": "button.add-to-cart"
+    }
+  ],
+  "truncated": false
+}

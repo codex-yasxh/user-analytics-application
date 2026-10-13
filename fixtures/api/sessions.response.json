@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "session_id": "a81f2943-6c0d-4b5e-9f27-3d1c8e5a7b90",
+      "event_count": 2,
+      "first_seen": "2026-10-13T06:00:00.000Z",
+      "last_seen": "2026-10-13T06:00:05.000Z",
+      "entry_path": "https://demo.example.com/products"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "limit": 20
+}

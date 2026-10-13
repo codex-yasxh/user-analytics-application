@@ -1,0 +1,17 @@
+{
+  "path": "https://demo.example.com/products",
+  "bucket": "desktop",
+  "reference_width": 1280,
+  "total": 1,
+  "returned": 1,
+  "points": [
+    {
+      "x": 640,
+      "y": 912,
+      "doc_w": 1280,
+      "doc_h": 2400,
+      "vw": 1280,
+      "vh": 800
+    }
+  ]
+}

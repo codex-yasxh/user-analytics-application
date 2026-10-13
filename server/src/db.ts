@@ -1,7 +1,23 @@
-import { MongoClient, type Db } from 'mongodb';
+import { MongoClient, type Db, type IndexDescription } from 'mongodb';
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
+
+export const INDEX_DEFINITIONS: IndexDescription[] = [
+  {
+    key: { eid: 1 },
+    name: 'eid_unique',
+    unique: true,
+  },
+  {
+    key: { session_id: 1, ts: 1, _id: 1 },
+    name: 'session_ts_id',
+  },
+  {
+    key: { type: 1, path: 1, vw_bucket: 1, ts: -1 },
+    name: 'heatmap_lookup',
+  },
+];
 
 export async function connectDb(mongoUrl: string): Promise<Db> {
   if (db && client) {
@@ -39,6 +55,12 @@ export async function pingDb(fallbackUrl?: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+export async function syncIndexes(database?: Db): Promise<string[]> {
+  const targetDb = database || getDb();
+  const collection = targetDb.collection('events');
+  return collection.createIndexes(INDEX_DEFINITIONS);
 }
 
 export async function closeDb(): Promise<void> {

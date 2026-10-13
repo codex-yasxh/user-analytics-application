@@ -48,7 +48,6 @@ describe('App factory and security basics', () => {
     });
   });
 
-  // Verifies read-route CORS policy by path prefix until the sessions endpoint is implemented in the server lane, then must be repointed to it.
   it('a read route called with Origin: https://evil.example returns no access-control-allow-origin header', async () => {
     const res = await fetch(`${instance.baseUrl}/api/sessions`, {
       method: 'GET',
@@ -66,7 +65,9 @@ describe('App factory and security basics', () => {
         Origin: 'http://localhost:5173',
       },
     });
-    expect(res.headers.get('access-control-allow-origin')).toBe('http://localhost:5173');
+    expect(res.headers.get('access-control-allow-origin')).toBe(
+      'http://localhost:5173',
+    );
   });
 
   it('the ingest preflight returns * for access-control-allow-origin', async () => {
@@ -113,6 +114,8 @@ describe('App factory and security basics', () => {
         message: 'Internal server error',
       },
     });
-    expect(JSON.stringify(capturedJson)).not.toContain('Sensitive internal details');
+    expect(JSON.stringify(capturedJson)).not.toContain(
+      'Sensitive internal details',
+    );
   });
 });

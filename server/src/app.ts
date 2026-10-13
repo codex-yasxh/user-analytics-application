@@ -1,6 +1,11 @@
 import crypto from 'node:crypto';
 import cors from 'cors';
-import express, { type Express, type NextFunction, type Request, type Response } from 'express';
+import express, {
+  type Express,
+  type NextFunction,
+  type Request,
+  type Response,
+} from 'express';
 import helmet from 'helmet';
 import { type Db } from 'mongodb';
 import { pino } from 'pino';
@@ -8,6 +13,7 @@ import { pinoHttp } from 'pino-http';
 import type { Config } from './config.js';
 import { setDb } from './db.js';
 import { createEventsRouter } from './routes/events.js';
+import { createSessionsRouter } from './routes/sessions.js';
 
 export interface AppOptions {
   db: Db;
@@ -28,7 +34,8 @@ export function createApp({ db, config }: AppOptions): Express {
   app.use(
     pinoHttp({
       logger: pino({ level: config.LOG_LEVEL }),
-      genReqId: (req) => (req.headers['x-request-id'] as string) || crypto.randomUUID(),
+      genReqId: (req) =>
+        (req.headers['x-request-id'] as string) || crypto.randomUUID(),
       serializers: {
         req: (req) => ({
           id: req.id,
@@ -95,6 +102,9 @@ export function createApp({ db, config }: AppOptions): Express {
   // Events ingest router
   app.use(createEventsRouter({ db, config }));
 
+  // Sessions list router
+  app.use(createSessionsRouter({ db }));
+
   // Central 404 handler (JSON error shape)
   app.use((_req: Request, res: Response) => {
     res.status(404).json({
@@ -118,9 +128,12 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   void _next;
-  const errorObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
+  const errorObj =
+    err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
   const status =
-    typeof errorObj?.status === 'number' && errorObj.status >= 400 && errorObj.status < 600
+    typeof errorObj?.status === 'number' &&
+    errorObj.status >= 400 &&
+    errorObj.status < 600
       ? errorObj.status
       : 500;
   const code =

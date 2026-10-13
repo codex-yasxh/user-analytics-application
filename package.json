@@ -22,6 +22,7 @@
     "dev": "npm run copy-demo && concurrently -k \"npx tsx watch --env-file=.env server/src/index.ts\" \"npm run dev -w @cf/dashboard\" \"npx tsx watch --include tracker/src/index.ts tracker/build.ts\""
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
     "concurrently": "10.0.6",
     "eslint": "10.12.0",
     "prettier": "3.9.10",

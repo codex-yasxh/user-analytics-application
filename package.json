@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "server"
   ],
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",

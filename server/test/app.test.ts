@@ -1,7 +1,9 @@
+import type { NextFunction, Request, Response } from 'express';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { errorHandler } from '../src/app.js';
 import { startTestServer, type TestServerInstance } from './test-helper.js';
 
-describe('App Factory & Security Basics (V2)', () => {
+describe('App factory and security basics', () => {
   let instance: TestServerInstance;
 
   beforeAll(async () => {
@@ -76,16 +78,34 @@ describe('App Factory & Security Basics (V2)', () => {
     expect(instance.server).toBeDefined();
   });
 
-  it('hides internals on 500 and returns standard error shape', async () => {
-    const res = await fetch(`${instance.baseUrl}/_test/error`);
-    expect(res.status).toBe(500);
-    const body = await res.json();
-    expect(body).toEqual({
+  it('hides internals on 500 and returns standard error shape', () => {
+    let capturedStatus = 0;
+    let capturedJson: unknown = null;
+    const mockRes = {
+      status(code: number) {
+        capturedStatus = code;
+        return this;
+      },
+      json(data: unknown) {
+        capturedJson = data;
+        return this;
+      },
+    } as unknown as Response;
+
+    errorHandler(
+      new Error('Sensitive internal details'),
+      {} as Request,
+      mockRes,
+      (() => {}) as unknown as NextFunction,
+    );
+
+    expect(capturedStatus).toBe(500);
+    expect(capturedJson).toEqual({
       error: {
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Internal server error',
       },
     });
-    expect(JSON.stringify(body)).not.toContain('Sensitive internal details');
+    expect(JSON.stringify(capturedJson)).not.toContain('Sensitive internal details');
   });
 });

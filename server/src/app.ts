@@ -95,12 +95,6 @@ export function createApp({ db, config }: AppOptions): Express {
   // Events ingest router
   app.use(eventsRouter);
 
-  if (process.env.NODE_ENV === 'test') {
-    app.get('/_test/error', () => {
-      throw new Error('Sensitive internal details');
-    });
-  }
-
   // Central 404 handler (JSON error shape)
   app.use((_req: Request, res: Response) => {
     res.status(404).json({
@@ -112,33 +106,40 @@ export function createApp({ db, config }: AppOptions): Express {
   });
 
   // Central error handler (hides internals on 500)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-    const errorObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
-    const status =
-      typeof errorObj?.status === 'number' && errorObj.status >= 400 && errorObj.status < 600
-        ? errorObj.status
-        : 500;
-    const code =
-      typeof errorObj?.code === 'string'
-        ? errorObj.code
-        : status === 500
-          ? 'INTERNAL_SERVER_ERROR'
-          : 'ERROR';
-    const message =
-      status === 500
-        ? 'Internal server error'
-        : typeof errorObj?.message === 'string'
-          ? errorObj.message
-          : 'An error occurred';
-
-    res.status(status).json({
-      error: {
-        code,
-        message,
-      },
-    });
-  });
+  app.use(errorHandler);
 
   return app;
+}
+
+export function errorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
+  void _next;
+  const errorObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : null;
+  const status =
+    typeof errorObj?.status === 'number' && errorObj.status >= 400 && errorObj.status < 600
+      ? errorObj.status
+      : 500;
+  const code =
+    typeof errorObj?.code === 'string'
+      ? errorObj.code
+      : status === 500
+        ? 'INTERNAL_SERVER_ERROR'
+        : 'ERROR';
+  const message =
+    status === 500
+      ? 'Internal server error'
+      : typeof errorObj?.message === 'string'
+        ? errorObj.message
+        : 'An error occurred';
+
+  res.status(status).json({
+    error: {
+      code,
+      message,
+    },
+  });
 }

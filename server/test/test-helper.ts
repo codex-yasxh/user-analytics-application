@@ -32,6 +32,7 @@ export async function startTestServer(
   await syncIndexes(db);
 
   const config: Config = {
+    NODE_ENV: 'test',
     PORT: 0,
     MONGO_URL: mongoUrl,
     DASHBOARD_ORIGIN: 'http://localhost:5173',

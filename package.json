@@ -8,8 +8,15 @@
   ],
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",
-    "lint": "echo \"stub: lint\"",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "typecheck": "echo \"stub: typecheck\"",
     "test": "echo \"stub: test\""
+  },
+  "devDependencies": {
+    "eslint": "10.12.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
   }
 }

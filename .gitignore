@@ -1,1 +1,9 @@
-docs/
+node_modules/
+dist/
+.env
+coverage/
+playwright-report/
+test-results/
+dashboard/public/cf.js
+dashboard/public/demo/
+agent_docs/

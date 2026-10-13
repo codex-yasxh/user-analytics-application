@@ -13,6 +13,8 @@ import { pinoHttp } from 'pino-http';
 import type { Config } from './config.js';
 import { setDb } from './db.js';
 import { createEventsRouter } from './routes/events.js';
+import { createHeatmapRouter } from './routes/heatmap.js';
+import { createPagesRouter } from './routes/pages.js';
 import { createSessionsRouter } from './routes/sessions.js';
 
 export interface AppOptions {
@@ -104,6 +106,12 @@ export function createApp({ db, config }: AppOptions): Express {
 
   // Sessions list router
   app.use(createSessionsRouter({ db }));
+
+  // Pages router
+  app.use(createPagesRouter({ db }));
+
+  // Heatmap router
+  app.use(createHeatmapRouter({ db }));
 
   // Central 404 handler (JSON error shape)
   app.use((_req: Request, res: Response) => {

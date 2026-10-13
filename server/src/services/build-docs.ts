@@ -17,7 +17,7 @@ export interface BuildDocsResult {
  */
 export function buildDocs(
   rawEvents: readonly unknown[],
-  received: Date = new Date(),
+  received: Date,
 ): BuildDocsResult {
   const docs: StoredEvent[] = [];
   let rejected = 0;

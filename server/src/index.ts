@@ -3,6 +3,7 @@ import express from 'express';
 import { pino } from 'pino';
 import { loadConfig } from './config.js';
 import { closeDb, connectDb, pingDb } from './db.js';
+import { eventsRouter } from './routes/events.js';
 
 export const config = loadConfig();
 
@@ -11,6 +12,8 @@ export const logger = pino({
 });
 
 export const app = express();
+
+app.use(eventsRouter);
 
 app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });

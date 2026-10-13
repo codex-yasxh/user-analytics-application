@@ -1,6 +1,7 @@
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import crypto from 'node:crypto';
+import type { Express } from 'express';
 import { MongoClient, type Db } from 'mongodb';
 import { createApp } from '../src/app.js';
 import type { Config } from '../src/config.js';
@@ -8,6 +9,7 @@ import { syncIndexes } from '../src/db.js';
 
 export interface TestServerInstance {
   server: Server;
+  app: Express;
   baseUrl: string;
   db: Db;
   client: MongoClient;
@@ -58,6 +60,7 @@ export async function startTestServer(configOverrides: Partial<Config> = {}): Pr
 
   return {
     server,
+    app,
     baseUrl,
     db,
     client,

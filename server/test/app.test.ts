@@ -48,6 +48,7 @@ describe('App factory and security basics', () => {
     });
   });
 
+  // Verifies read-route CORS policy by path prefix until the sessions endpoint is implemented in the server lane, then must be repointed to it.
   it('a read route called with Origin: https://evil.example returns no access-control-allow-origin header', async () => {
     const res = await fetch(`${instance.baseUrl}/api/sessions`, {
       method: 'GET',
@@ -81,7 +82,7 @@ describe('App factory and security basics', () => {
   });
 
   it('sets trust proxy to 1', () => {
-    expect(instance.server).toBeDefined();
+    expect(instance.app.get('trust proxy')).toBe(1);
   });
 
   it('hides internals on 500 and returns standard error shape', () => {

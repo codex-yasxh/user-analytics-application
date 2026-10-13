@@ -154,6 +154,8 @@ describe('GET /api/sessions/:id/events', () => {
   it('uses _id as deterministic tie-break for identical timestamps', async () => {
     const tieServer = await startTestServer();
     try {
+      // The supporting index would order equal timestamps by _id even if the
+      // route omitted its explicit tie-breaker, so remove it in this isolated DB.
       await tieServer.db.collection('events').dropIndex('session_ts_id');
       const sameTs = new Date('2026-10-13T12:00:00.000Z');
       await tieServer.db.collection('events').insertMany([

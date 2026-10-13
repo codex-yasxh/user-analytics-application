@@ -23,6 +23,12 @@ describe('App factory and security basics', () => {
     expect(body).toEqual({ status: 'ok' });
   });
 
+  it('includes helmet security headers and removes x-powered-by', async () => {
+    const res = await fetch(`${instance.baseUrl}/health`);
+    expect(res.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(res.headers.get('x-powered-by')).toBeNull();
+  });
+
   it('/ready returns 200 when database ping succeeds', async () => {
     const res = await fetch(`${instance.baseUrl}/ready`);
     expect(res.status).toBe(200);

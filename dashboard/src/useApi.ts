@@ -94,7 +94,9 @@ export function useApi<T>(endpoint: string | null): UseApiResult<T> {
           if (errJson?.error?.message) {
             errMsg = errJson.error.message;
           }
-        } catch {}
+        } catch {
+          // Response body was not JSON; fallback to status text message
+        }
 
         if (!signal.aborted) {
           setError(errMsg);

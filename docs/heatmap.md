@@ -22,15 +22,16 @@ The heatmap iframe renders the demo page at the bucket's reference width. Clicks
 
 Clicks store `pageX`/`pageY` (document-relative) and `doc_w`/`doc_h` (document scroll dimensions at click time).
 
-Rendering uses uniform aspect-ratio scaling:
+Rendering uses independent X/Y scaling when the iframe height is available:
 
 ```
-scale = renderWidth / doc_w
-px = x * scale
-py = y * scale
+scaleX = renderWidth / doc_w
+scaleY = renderHeight / doc_h   (falls back to scaleX when renderHeight is unavailable)
+px = x * scaleX
+py = y * scaleY
 ```
 
-Both axes use the same scale factor (derived from width) to prevent aspect distortion on tall or dynamic pages. Independent `x/doc_w` and `y/doc_h` ratios are avoided.
+Independent scaling corrects for page height differences across viewport widths. A page may be 776px tall at 1536px wide but 1200px tall at 1280px wide — uniform scaling would place Y coordinates ~194px off. When the heatmap renders over an iframe, it uses the iframe's actual height for Y scaling; for coordinate-grid mode (external pages), it falls back to uniform scaling.
 
 ## Canvas Rendering
 

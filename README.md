@@ -11,6 +11,7 @@ Drop a 2.4 KB script on any page — get sessions, journeys, and heatmaps.
 - **Dashboard:** [causal-funnel-dashboard-gamma.vercel.app](https://causal-funnel-dashboard-gamma.vercel.app/)
 - **Demo Store:** [/demo/home.html](https://causal-funnel-dashboard-gamma.vercel.app/demo/home.html)
 - **API:** [/health](https://user-analytics-application-causalfunnel.onrender.com/health)
+- **Preview Video:** [Google Drive](https://drive.google.com/drive/folders/1s7bSR_BsclL-jpHlNQI3lQ4SoazSYMB7?usp=sharing)
 
 > API is on Render free tier — first request after idle takes 30–60s. Dashboard retries automatically.
 
@@ -51,7 +52,7 @@ That's it. Zero dependencies, works on any site.
 
 | Layer     | Tech                                                     |
 | --------- | -------------------------------------------------------- |
-| Tracker   | TypeScript → esbuild IIFE (`cf.js`), 2.4 KB gzip, 0 deps |
+| Tracker   | TypeScript → esbuild IIFE (`cf.js`), 2.3 KB gzip, 0 deps |
 | API       | Express 5, Zod validation, native MongoDB driver         |
 | Database  | MongoDB (Atlas hosted, local via Docker)                 |
 | Dashboard | React 19, Vite, TypeScript                               |
@@ -62,7 +63,7 @@ That's it. Zero dependencies, works on any site.
 ## Checks
 
 ```bash
-npm run check          # lint + typecheck + prettier + 69 tests
+npm run check          # lint + typecheck + prettier + 77 tests
 ```
 
 ---

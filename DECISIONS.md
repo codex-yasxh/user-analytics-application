@@ -14,9 +14,9 @@ Mongoose adds schema middleware, casting, and a model layer. For a tracker that 
 
 `insertMany(docs, { ordered: false })` continues inserting remaining documents when one fails. Combined with the unique index on `{ eid: 1 }`, retried network batches skip duplicates (error code 11000) while inserting new events. The response breaks down `accepted`, `duplicates`, and `rejected` from the `MongoBulkWriteError` shape.
 
-### 4. Uniform scale factor for heatmap projection
+### 4. Independent X/Y scaling for heatmap projection
 
-The dashboard computes `scale = renderWidth / doc_w` and applies it to both axes. Independent `x/doc_w` and `y/doc_h` ratios would distort aspect ratios on tall or dynamic pages. Spike 2 measured 0.000px alignment gap across 390px, 768px, and 1280px reference widths.
+The dashboard computes `scaleX = renderWidth / doc_w` and `scaleY = renderHeight / doc_h`, scaling each axis independently. Pages change height across viewport widths (e.g. 776px at 1536px wide vs 1200px at 1280px wide), so a single scale factor derived from width alone drifts Y coordinates by hundreds of pixels. When the heatmap renders over an iframe, `renderHeight` is the iframe's scroll height; for external pages without an iframe, it falls back to uniform X scaling.
 
 ### 5. Viewport bucketing instead of fluid percentage scaling
 

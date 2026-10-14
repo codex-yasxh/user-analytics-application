@@ -14,6 +14,7 @@ function formatRelativeTime(isoDate: string): string {
     const elapsedSec = Math.floor(
       (Date.now() - new Date(isoDate).getTime()) / 1000,
     );
+    if (elapsedSec <= 5) return 'just now';
     if (elapsedSec < 60) return `${elapsedSec}s ago`;
     const elapsedMin = Math.floor(elapsedSec / 60);
     if (elapsedMin < 60) return `${elapsedMin}m ago`;
@@ -21,6 +22,15 @@ function formatRelativeTime(isoDate: string): string {
     if (elapsedHours < 24) return `${elapsedHours}h ago`;
     const elapsedDays = Math.floor(elapsedHours / 24);
     return `${elapsedDays}d ago`;
+  } catch {
+    return isoDate;
+  }
+}
+
+function formatTooltipTime(isoDate: string): string {
+  try {
+    const d = new Date(isoDate);
+    return `${d.toLocaleString()} (${isoDate})`;
   } catch {
     return isoDate;
   }
@@ -214,13 +224,13 @@ export function SessionsView() {
                     </td>
                     <td
                       style={{ padding: '0.75rem 1rem', color: '#6b7280' }}
-                      title={session.first_seen}
+                      title={formatTooltipTime(session.first_seen)}
                     >
                       {formatRelativeTime(session.first_seen)}
                     </td>
                     <td
                       style={{ padding: '0.75rem 1rem', color: '#6b7280' }}
-                      title={session.last_seen}
+                      title={formatTooltipTime(session.last_seen)}
                     >
                       {formatRelativeTime(session.last_seen)}
                     </td>

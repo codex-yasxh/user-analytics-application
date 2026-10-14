@@ -1,5 +1,5 @@
 [build]
-buildCommand = "rm -rf node_modules/.cache dashboard/node_modules/.vite && npm ci"
+buildCommand = "npm ci --ignore-scripts"
 
 [deploy]
 startCommand = "npx tsx server/src/index.ts"

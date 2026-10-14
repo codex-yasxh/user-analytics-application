@@ -138,13 +138,14 @@ export async function seedDatabase(
   }
 
   const now = Date.now();
-  const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+  const PROJECT_START = new Date('2026-10-12T00:00:00Z').getTime();
+  const windowMs = now - PROJECT_START;
   const allEvents: SeedEventDoc[] = [];
 
   for (let s = 0; s < sessionCount; s++) {
     const sessionId = crypto.randomUUID();
-    // Spread sessions over the last 14 days
-    const sessionStartTime = now - Math.floor(Math.random() * TWO_WEEKS_MS);
+    const sessionStartTime =
+      PROJECT_START + Math.floor(Math.random() * windowMs);
     let currentTime = sessionStartTime;
 
     // Pick bucket: 60% desktop, 25% tablet, 15% mobile

@@ -178,8 +178,11 @@ All endpoints communicate using JSON and follow a consistent error format:
 | `GET`  | `/api/sessions/:id/events` | Retrieves full event journey timeline for a given session.       | Path param: `:id` (UUID v4)                                              |
 | `GET`  | `/api/pages`               | Summarizes unique page paths ranked by total clicks and views.   | None                                                                     |
 | `GET`  | `/api/heatmap`             | Retrieves click coordinates for a path within a viewport bucket. | `path` (required), `bucket` (`desktop` \| `tablet` \| `mobile`), `limit` |
+| `GET`  | `/api/elements`            | Top-clicked elements grouped by CSS selector.                    | `path` (required), `bucket` (`desktop` \| `tablet` \| `mobile`), `limit` |
 | `GET`  | `/health`                  | Liveness health check.                                           | Returns `{ status: "ok" }`                                               |
 | `GET`  | `/ready`                   | Readiness check verifying database connectivity.                 | Returns `{ status: "ready" }`                                            |
+
+**Ingest Kill Switch:** Set `INGEST_ENABLED=false` to reject all incoming events with 503 `INGEST_DISABLED`. Useful for maintenance windows or cost control without taking down the read APIs.
 
 ---
 

@@ -67,6 +67,29 @@ export function JourneyView() {
         >
           ID: {id}
         </div>
+        {data && (
+          <div
+            style={{
+              marginTop: '0.5rem',
+              display: 'flex',
+              gap: '0.75rem',
+              fontSize: '0.8125rem',
+            }}
+          >
+            <span
+              style={{
+                backgroundColor: '#f3f4f6',
+                padding: '0.125rem 0.5rem',
+                borderRadius: '9999px',
+                color: '#374151',
+                fontWeight: 600,
+                fontFamily: 'inherit',
+              }}
+            >
+              {data.events.length} events
+            </span>
+          </div>
+        )}
       </div>
 
       {waking && <WakingBanner />}
@@ -224,6 +247,12 @@ export function JourneyView() {
                           <div>
                             <strong>Doc:</strong> {event.doc_w} &times;{' '}
                             {event.doc_h}
+                          </div>
+                        )}
+                        {event.vw && event.vh && (
+                          <div>
+                            <strong>Viewport:</strong> {event.vw} &times;{' '}
+                            {event.vh}
                           </div>
                         )}
                         {event.sel && (

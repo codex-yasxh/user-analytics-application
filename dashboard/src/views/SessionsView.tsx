@@ -177,10 +177,21 @@ export function SessionsView() {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((session) => (
+                {data.data.map((session, idx) => (
                   <tr
                     key={session.session_id}
-                    style={{ borderBottom: '1px solid #f3f4f6' }}
+                    style={{
+                      borderBottom: '1px solid #f3f4f6',
+                      backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = '#eff6ff')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        idx % 2 === 0 ? '#ffffff' : '#f9fafb')
+                    }
                   >
                     <td style={{ padding: '0.75rem 1rem' }}>
                       <Link

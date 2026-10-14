@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'lane/*']
   pull_request:
     branches: [main]
 
@@ -10,6 +10,18 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGO_URL_TEST: mongodb://127.0.0.1:27017
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

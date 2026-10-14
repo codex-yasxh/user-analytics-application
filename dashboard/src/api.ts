@@ -88,3 +88,14 @@ export interface HeatmapResponse {
   returned: number;
   points: HeatmapPoint[];
 }
+
+export interface ElementItem {
+  sel: string;
+  count: number;
+}
+
+export interface ElementsResponse {
+  path: string;
+  bucket: string;
+  elements: ElementItem[];
+}

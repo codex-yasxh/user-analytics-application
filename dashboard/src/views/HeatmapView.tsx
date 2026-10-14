@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useApi } from '../useApi.js';
-import { DEMO_ORIGIN, type PageItem, type HeatmapResponse } from '../api.js';
+import {
+  DEMO_ORIGIN,
+  type PageItem,
+  type HeatmapResponse,
+  type ElementsResponse,
+} from '../api.js';
 import { scalePoint } from '../math.js';
 import {
   LoadingState,
@@ -57,6 +62,12 @@ export function HeatmapView() {
     error: heatmapError,
     reload: reloadHeatmap,
   } = useApi<HeatmapResponse>(heatmapEndpoint);
+
+  const elementsEndpoint = selectedPath
+    ? `/api/elements?path=${encodeURIComponent(selectedPath)}&bucket=${selectedBucket}&limit=20`
+    : null;
+
+  const { data: elementsData } = useApi<ElementsResponse>(elementsEndpoint);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -384,6 +395,126 @@ export function HeatmapView() {
               }}
             />
           </div>
+        </div>
+      )}
+
+      {/* Top Clicked Elements Panel */}
+      {elementsData && elementsData.elements.length > 0 && (
+        <div
+          style={{
+            marginTop: '2rem',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#f9fafb',
+              padding: '0.75rem 1rem',
+              borderBottom: '1px solid #e5e7eb',
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: '#111827',
+              }}
+            >
+              Top Clicked Elements ({selectedBucket})
+            </h3>
+          </div>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: '0.875rem',
+            }}
+          >
+            <thead>
+              <tr style={{ backgroundColor: '#f9fafb' }}>
+                <th
+                  style={{
+                    textAlign: 'left',
+                    padding: '0.5rem 1rem',
+                    fontWeight: 600,
+                    color: '#4b5563',
+                    borderBottom: '1px solid #e5e7eb',
+                    width: '3rem',
+                  }}
+                >
+                  #
+                </th>
+                <th
+                  style={{
+                    textAlign: 'left',
+                    padding: '0.5rem 1rem',
+                    fontWeight: 600,
+                    color: '#4b5563',
+                    borderBottom: '1px solid #e5e7eb',
+                  }}
+                >
+                  CSS Selector
+                </th>
+                <th
+                  style={{
+                    textAlign: 'right',
+                    padding: '0.5rem 1rem',
+                    fontWeight: 600,
+                    color: '#4b5563',
+                    borderBottom: '1px solid #e5e7eb',
+                    width: '6rem',
+                  }}
+                >
+                  Clicks
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {elementsData.elements.map((el, i) => (
+                <tr
+                  key={el.sel}
+                  style={{
+                    backgroundColor: i % 2 === 0 ? '#ffffff' : '#f9fafb',
+                  }}
+                >
+                  <td
+                    style={{
+                      padding: '0.5rem 1rem',
+                      color: '#9ca3af',
+                      borderBottom: '1px solid #f3f4f6',
+                    }}
+                  >
+                    {i + 1}
+                  </td>
+                  <td
+                    style={{
+                      padding: '0.5rem 1rem',
+                      fontFamily: 'monospace',
+                      fontSize: '0.8125rem',
+                      color: '#111827',
+                      borderBottom: '1px solid #f3f4f6',
+                    }}
+                  >
+                    {el.sel}
+                  </td>
+                  <td
+                    style={{
+                      padding: '0.5rem 1rem',
+                      textAlign: 'right',
+                      fontWeight: 600,
+                      color: '#1d4ed8',
+                      borderBottom: '1px solid #f3f4f6',
+                    }}
+                  >
+                    {el.count}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

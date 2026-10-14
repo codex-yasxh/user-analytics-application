@@ -52,3 +52,6 @@ export const JOURNEY_CAP = 1000;
 
 // Maximum number of sessions returned per page in sessions query
 export const SESSIONS_LIMIT_MAX = 100;
+
+// Maximum number of element rows returned in a top-clicked-elements query
+export const ELEMENTS_LIMIT_MAX = 200;

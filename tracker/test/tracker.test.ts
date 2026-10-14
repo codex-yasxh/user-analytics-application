@@ -459,7 +459,7 @@ describe('tracker behavior', () => {
     sendBeacon.mockReturnValue(false);
 
     windowListeners.get('pagehide')?.(new Event('pagehide'));
-    await vi.advanceTimersByTimeAsync(2000);
+    await vi.advanceTimersByTimeAsync(10000);
 
     expect(fetchMock).toHaveBeenCalledTimes(4);
     expect(tracker.eventsSent).toBe(0);

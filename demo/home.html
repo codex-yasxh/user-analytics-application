@@ -3,12 +3,177 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Demo Store - Home</title>
+    <title>Demo Store - Home | CausalFunnel</title>
     <script src="/cf.js" data-endpoint="__API_URL__" defer></script>
+    <script src="chip.js" defer></script>
+    <style>
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #1f2937;
+        background: #fcfcfd;
+      }
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+      nav a:hover {
+        color: #2563eb;
+      }
+      .hero {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: linear-gradient(180deg, #f0fdf4 0%, #fcfcfd 100%);
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #111827;
+      }
+      .hero p {
+        font-size: 1.125rem;
+        color: #4b5563;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+      }
+      .grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+      .card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+      }
+      .card h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+      }
+      .price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #059669;
+        margin-bottom: 1rem;
+      }
+      button {
+        cursor: pointer;
+        padding: 0.625rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: background 0.15s ease;
+      }
+      .add-to-cart {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+      }
+      .add-to-cart:hover {
+        background: #1d4ed8;
+      }
+      .banner {
+        margin-top: 1rem;
+        padding: 0.5rem;
+        background: #ecfdf5;
+        border-radius: 4px;
+        color: #065f46;
+        font-size: 0.85rem;
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <h1>Demo Store</h1>
-    <p>Welcome to our sample storefront.</p>
-    <button class="add-to-cart">Add to Cart</button>
+    <header>
+      <div style="font-weight: 800; font-size: 1.25rem; color: #111827">
+        Acme Commerce
+      </div>
+      <nav>
+        <a href="home.html">Home</a>
+        <a href="product.html" class="nav-products">Products</a>
+        <a href="checkout.html">Checkout</a>
+        <a href="/" style="color: #2563eb; font-weight: 600">Dashboard</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <h1>Modern Audio &amp; Gear Store</h1>
+      <p>
+        Precision audio gear engineered for creators. Try clicking cards and
+        buttons to generate live session events.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Studio Headphones Pro</h3>
+        <p>
+          Reference-grade circumaural monitors with ultra-flat acoustic
+          frequency response.
+        </p>
+        <div class="price">$299.00</div>
+        <button class="add-to-cart" onclick="showAdded('h1')">
+          Add to Cart
+        </button>
+        <div id="h1" class="banner">Added to cart!</div>
+      </div>
+
+      <div class="card">
+        <h3>Wireless Pods ANC</h3>
+        <p>
+          Active noise canceling earbuds with spatial audio tracking and 36-hour
+          battery life.
+        </p>
+        <div class="price">$179.00</div>
+        <button class="add-to-cart" onclick="showAdded('h2')">
+          Add to Cart
+        </button>
+        <div id="h2" class="banner">Added to cart!</div>
+      </div>
+
+      <div class="card">
+        <h3>Broadcast Microphone</h3>
+        <p>
+          Dynamic cardioid microphone built for broadcast, podcasting, and
+          voiceover studio work.
+        </p>
+        <div class="price">$249.00</div>
+        <button class="add-to-cart" onclick="showAdded('h3')">
+          Add to Cart
+        </button>
+        <div id="h3" class="banner">Added to cart!</div>
+      </div>
+    </div>
+
+    <script>
+      function showAdded(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.style.display = 'block';
+          setTimeout(function () {
+            el.style.display = 'none';
+          }, 2000);
+        }
+      }
+    </script>
   </body>
 </html>

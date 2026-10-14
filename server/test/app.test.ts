@@ -70,6 +70,19 @@ describe('App factory and security basics', () => {
     );
   });
 
+  it('a read route preflight called with allowed DASHBOARD_ORIGIN returns access-control-allow-origin', async () => {
+    const res = await fetch(`${instance.baseUrl}/api/sessions`, {
+      method: 'OPTIONS',
+      headers: {
+        Origin: 'http://localhost:5173',
+        'Access-Control-Request-Method': 'GET',
+      },
+    });
+    expect(res.headers.get('access-control-allow-origin')).toBe(
+      'http://localhost:5173',
+    );
+  });
+
   it('the ingest preflight returns * for access-control-allow-origin', async () => {
     const res = await fetch(`${instance.baseUrl}/api/events`, {
       method: 'OPTIONS',

@@ -57,15 +57,32 @@ export function createApp({ db, config }: AppOptions): Express {
   app.use('/api/events', cors({ origin: '*' }));
 
   // Read routes CORS: DASHBOARD_ORIGIN only
+  const allowedOrigins = config.DASHBOARD_ORIGIN.split(',').map((o) =>
+    o.trim().replace(/\/+$/, ''),
+  );
   const readCors = cors({
     origin: (requestOrigin, callback) => {
-      if (!requestOrigin || requestOrigin === config.DASHBOARD_ORIGIN) {
+      if (
+        !requestOrigin ||
+        config.DASHBOARD_ORIGIN === '*' ||
+        allowedOrigins.includes(requestOrigin)
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
       }
     },
   });
+  app.options(
+    [
+      '/api/sessions',
+      '/api/sessions/:id/events',
+      '/api/pages',
+      '/api/heatmap',
+      '/api/elements',
+    ],
+    readCors,
+  );
   app.use('/api', (req, res, next) => {
     if (req.path === '/events') {
       return next();

@@ -2,6 +2,7 @@ export interface Point {
   x: number;
   y: number;
   doc_w: number;
+  doc_h: number;
 }
 
 export interface ScaledPoint {
@@ -9,12 +10,11 @@ export interface ScaledPoint {
   py: number;
 }
 
-/**
- * Uniform scaling for heatmap click points based on reference render width and document width.
- * Formula: scale = renderWidth / doc_w
- * Both axes use the same scale factor to preserve element aspect ratios.
- */
-export function scalePoint(point: Point, renderWidth: number): ScaledPoint {
+export function scalePoint(
+  point: Point,
+  renderWidth: number,
+  renderHeight?: number,
+): ScaledPoint {
   if (!point || typeof point.doc_w !== 'number' || point.doc_w <= 0) {
     throw new Error('Invalid doc_w: must be a positive number');
   }
@@ -22,9 +22,14 @@ export function scalePoint(point: Point, renderWidth: number): ScaledPoint {
     throw new Error('Invalid renderWidth: must be a positive number');
   }
 
-  const scale = renderWidth / point.doc_w;
+  const scaleX = renderWidth / point.doc_w;
+  const scaleY =
+    renderHeight && point.doc_h > 0
+      ? renderHeight / point.doc_h
+      : scaleX;
+
   return {
-    px: Math.round(point.x * scale),
-    py: Math.round(point.y * scale),
+    px: Math.round(point.x * scaleX),
+    py: Math.round(point.y * scaleY),
   };
 }

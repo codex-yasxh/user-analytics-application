@@ -198,7 +198,7 @@ export function HeatmapView() {
 
     for (const point of heatmapData.points) {
       try {
-        const { px, py } = scalePoint(point, width);
+        const { px, py } = scalePoint(point, width, isRenderable ? iframeHeight : undefined);
         const r = Math.max(16, Math.min(32, Math.round(width / 35)));
 
         const grad = ctx.createRadialGradient(px, py, 0, px, py, r);

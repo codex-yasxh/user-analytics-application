@@ -20,6 +20,7 @@
     "db:sync": "tsx scripts/sync-indexes.ts",
     "copy-demo": "tsx scripts/copy-demo.ts",
     "seed": "tsx scripts/seed.ts",
+    "capture-hotspots": "tsx scripts/capture-hotspots.ts",
     "explain": "tsx scripts/explain.ts",
     "test:proof-beacon": "npx playwright test e2e/proof-beacon.spec.ts",
     "test:proof-heatmap": "npx playwright test e2e/proof-heatmap.spec.ts",

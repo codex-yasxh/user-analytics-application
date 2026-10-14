@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { MongoClient } from 'mongodb';
 import { bucketOf } from '../packages/shared/src/bucket-of.js';
 import { normalizePath } from '../packages/shared/src/normalize-path.js';
@@ -11,7 +13,7 @@ interface HotspotRect {
   h: number;
 }
 
-const HOTSPOTS: Record<string, Record<string, HotspotRect[]>> = {
+const FALLBACK_HOTSPOTS: Record<string, Record<string, HotspotRect[]>> = {
   desktop: {
     home: [
       { selector: 'a.nav-products', x: 1040, y: 25, w: 75, h: 24 },
@@ -60,6 +62,16 @@ const HOTSPOTS: Record<string, Record<string, HotspotRect[]>> = {
   },
 };
 
+function loadHotspots(): Record<string, Record<string, HotspotRect[]>> {
+  const jsonPath = path.resolve(process.cwd(), 'scripts', 'hotspots.json');
+  try {
+    const raw = fs.readFileSync(jsonPath, 'utf8');
+    return JSON.parse(raw) as Record<string, Record<string, HotspotRect[]>>;
+  } catch {
+    return FALLBACK_HOTSPOTS;
+  }
+}
+
 const VIEWPORT_SIZES = {
   desktop: { vw: 1280, vh: 800, doc_w: 1280, doc_h: 1200 },
   tablet: { vw: 768, vh: 1024, doc_w: 768, doc_h: 1400 },
@@ -85,6 +97,7 @@ export async function seedDatabase(
     'http://localhost:5173'
   ).replace(/\/$/, '');
   const sessionCount = options.sessionCount || 30;
+  const HOTSPOTS = loadHotspots();
 
   const client = new MongoClient(mongoUrl);
   await client.connect();

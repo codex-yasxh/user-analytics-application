@@ -1,0 +1,236 @@
+{
+  "desktop": {
+    "home": [
+      {
+        "selector": "a.nav-products",
+        "x": 1021,
+        "y": 30,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 263,
+        "y": 624,
+        "w": 295,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 640,
+        "y": 624,
+        "w": 295,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 1017,
+        "y": 624,
+        "w": 295,
+        "h": 36
+      }
+    ],
+    "product": [
+      {
+        "selector": "a.nav-products",
+        "x": 1021,
+        "y": 30,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 734,
+        "y": 469,
+        "w": 139,
+        "h": 46
+      },
+      {
+        "selector": "button.buy-now",
+        "x": 879,
+        "y": 469,
+        "w": 120,
+        "h": 46
+      },
+      {
+        "selector": "button.quick-view",
+        "x": 760,
+        "y": 525,
+        "w": 192,
+        "h": 34
+      }
+    ],
+    "checkout": [
+      {
+        "selector": "input#name",
+        "x": 428,
+        "y": 264,
+        "w": 376,
+        "h": 38
+      },
+      {
+        "selector": "button.place-order",
+        "x": 428,
+        "y": 573,
+        "w": 376,
+        "h": 42
+      }
+    ]
+  },
+  "tablet": {
+    "home": [
+      {
+        "selector": "a.nav-products",
+        "x": 509,
+        "y": 30,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 200,
+        "y": 624,
+        "w": 286,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 568,
+        "y": 624,
+        "w": 286,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 200,
+        "y": 927,
+        "w": 286,
+        "h": 36
+      }
+    ],
+    "product": [
+      {
+        "selector": "a.nav-products",
+        "x": 509,
+        "y": 30,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 94,
+        "y": 897,
+        "w": 139,
+        "h": 46
+      },
+      {
+        "selector": "button.buy-now",
+        "x": 239,
+        "y": 897,
+        "w": 120,
+        "h": 46
+      },
+      {
+        "selector": "button.quick-view",
+        "x": 120,
+        "y": 953,
+        "w": 192,
+        "h": 34
+      }
+    ],
+    "checkout": [
+      {
+        "selector": "input#name",
+        "x": 384,
+        "y": 246,
+        "w": 720,
+        "h": 38
+      },
+      {
+        "selector": "button.place-order",
+        "x": 384,
+        "y": 555,
+        "w": 720,
+        "h": 42
+      }
+    ]
+  },
+  "mobile": {
+    "home": [
+      {
+        "selector": "a.nav-products",
+        "x": 261,
+        "y": 33,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 195,
+        "y": 728,
+        "w": 276,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 195,
+        "y": 1031,
+        "w": 276,
+        "h": 36
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 195,
+        "y": 1334,
+        "w": 276,
+        "h": 36
+      }
+    ],
+    "product": [
+      {
+        "selector": "a.nav-products",
+        "x": 261,
+        "y": 33,
+        "w": 61,
+        "h": 20
+      },
+      {
+        "selector": "button.add-to-cart",
+        "x": 94,
+        "y": 993,
+        "w": 139,
+        "h": 46
+      },
+      {
+        "selector": "button.buy-now",
+        "x": 239,
+        "y": 993,
+        "w": 120,
+        "h": 46
+      },
+      {
+        "selector": "button.quick-view",
+        "x": 120,
+        "y": 1049,
+        "w": 192,
+        "h": 34
+      }
+    ],
+    "checkout": [
+      {
+        "selector": "input#name",
+        "x": 195,
+        "y": 291,
+        "w": 342,
+        "h": 38
+      },
+      {
+        "selector": "button.place-order",
+        "x": 195,
+        "y": 600,
+        "w": 342,
+        "h": 42
+      }
+    ]
+  }
+}

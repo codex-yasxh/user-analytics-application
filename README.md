@@ -1,6 +1,6 @@
 # CausalFunnel Analytics
 
-Drop a 2.4 KB script on any page — get sessions, journeys, and heatmaps.
+Drop a 2.3 KB script on any page — get sessions, journeys, and heatmaps.
 
 [![CI](https://github.com/codex-yasxh/user-analytics-application-CausalFunnel/actions/workflows/ci.yml/badge.svg)](https://github.com/codex-yasxh/user-analytics-application-CausalFunnel/actions/workflows/ci.yml)
 
@@ -8,10 +8,10 @@ Drop a 2.4 KB script on any page — get sessions, journeys, and heatmaps.
 
 ## Live
 
-- **Dashboard:** [causal-funnel-dashboard-gamma.vercel.app](https://causal-funnel-dashboard-gamma.vercel.app/)
-- **Demo Store:** [/demo/home.html](https://causal-funnel-dashboard-gamma.vercel.app/demo/home.html)
-- **API:** [/health](https://user-analytics-application-causalfunnel.onrender.com/health)
-- **Preview Video:** [Google Drive](https://drive.google.com/drive/folders/1s7bSR_BsclL-jpHlNQI3lQ4SoazSYMB7?usp=sharing)
+- **Dashboard:** [https://causal-funnel-dashboard-gamma.vercel.app](https://causal-funnel-dashboard-gamma.vercel.app/)
+- **Demo Store:** [https://causal-funnel-dashboard-gamma.vercel.app/demo/home.html](https://causal-funnel-dashboard-gamma.vercel.app/demo/home.html)
+- **API:** [https://user-analytics-application-causalfunnel.onrender.com](https://user-analytics-application-causalfunnel.onrender.com/health)
+- **Preview Video:** [https://drive.google.com/drive/folders/1s7bSR...](https://drive.google.com/drive/folders/1s7bSR_BsclL-jpHlNQI3lQ4SoazSYMB7?usp=sharing)
 
 > API is on Render free tier — first request after idle takes 30–60s. Dashboard retries automatically.
 

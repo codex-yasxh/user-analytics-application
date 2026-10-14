@@ -8,17 +8,11 @@ import {
 } from './identity.js';
 import { buildSelector } from './selector.js';
 import { EventQueue } from './queue.js';
+import { safe } from './safe.js';
 import type { TrackerStatus, TrackedEvent } from './types.js';
 
+// sendBeacon has a ~64 KB per-request limit; keep under it.
 const BODY_MAX = 63 * 1024;
-
-function safe<T>(fn: () => T, fallback: T): T {
-  try {
-    return fn();
-  } catch {
-    return fallback;
-  }
-}
 
 export function installTracker(win: Window, doc: Document): void {
   const script = doc.currentScript as HTMLScriptElement | null;

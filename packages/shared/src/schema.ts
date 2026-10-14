@@ -11,7 +11,7 @@ const urlSchema = z.string().refine(
       return false;
     }
   },
-  { message: 'URL must have http: or https: protocol' }
+  { message: 'URL must have http: or https: protocol' },
 );
 
 export const pageViewSchema = z.object({

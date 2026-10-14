@@ -36,8 +36,11 @@ export function createApp({ db, config }: AppOptions): Express {
   app.use(
     pinoHttp({
       logger: pino({ level: config.LOG_LEVEL }),
-      genReqId: (req) =>
-        (req.headers['x-request-id'] as string) || crypto.randomUUID(),
+      genReqId: (req) => {
+        const header = req.headers['x-request-id'];
+        const id = typeof header === 'string' ? header.slice(0, 64) : '';
+        return /^[\w-]+$/.test(id) ? id : crypto.randomUUID();
+      },
       serializers: {
         req: (req) => ({
           id: req.id,
@@ -74,13 +77,7 @@ export function createApp({ db, config }: AppOptions): Express {
     },
   });
   app.options(
-    [
-      '/api/sessions',
-      '/api/sessions/:id/events',
-      '/api/pages',
-      '/api/heatmap',
-      '/api/elements',
-    ],
+    ['/api/sessions', '/api/sessions/:id/events', '/api/pages', '/api/heatmap'],
     readCors,
   );
   app.use('/api', (req, res, next) => {

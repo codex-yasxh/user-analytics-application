@@ -10,7 +10,9 @@ export function normalizePath(rawUrl: string): string {
   const parsed = new URL(rawUrl);
 
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error(`Invalid URL protocol: "${parsed.protocol}". Only http: and https: are allowed.`);
+    throw new Error(
+      `Invalid URL protocol: "${parsed.protocol}". Only http: and https: are allowed.`,
+    );
   }
 
   const cleanPathname = parsed.pathname.replace(/\/+$/, '');

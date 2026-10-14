@@ -2,7 +2,7 @@
 
 A privacy-conscious, lightweight event tracker, ingest engine, and analytics dashboard designed for storefront interaction analysis.
 
-[![CI](https://github.com/codex-yasxh/user-analytics-application/actions/workflows/ci.yml/badge.svg)](https://github.com/codex-yasxh/user-analytics-application/actions/workflows/ci.yml)
+[![CI](https://github.com/codex-yasxh/user-analytics-application-CausalFunnel/actions/workflows/ci.yml/badge.svg)](https://github.com/codex-yasxh/user-analytics-application-CausalFunnel/actions/workflows/ci.yml)
 
 ---
 
@@ -14,7 +14,7 @@ The full hosted stack is deployed, seeded, and accessible online:
 - **Analytics Dashboard:** [https://causal-funnel-dashboard-gamma.vercel.app/](https://causal-funnel-dashboard-gamma.vercel.app/)
 - **API Health Check:** [https://user-analytics-application-causalfunnel.onrender.com/health](https://user-analytics-application-causalfunnel.onrender.com/health)
 - **API Readiness Check:** [https://user-analytics-application-causalfunnel.onrender.com/ready](https://user-analytics-application-causalfunnel.onrender.com/ready)
-- **Walkthrough Video:** [Watch 2-Minute Video Walkthrough](https://youtu.be/placeholder) _(2m 30s demonstration: live tracking, session timeline, heatmap, and CI verification)_
+- **Walkthrough Video:** _(Recording in progress — link will be added before submission)_
 
 > **Note on Cold Starts:** The backend API is hosted on Render's free tier. If the service has been idle, spin-up may take 30–60 seconds on the first request. The dashboard includes a built-in waking indicator with automatic exponential backoff retry.
 
@@ -24,7 +24,7 @@ The full hosted stack is deployed, seeded, and accessible online:
 
 - **Tracker (`cf.js`):** Standalone IIFE (4.9 KB raw, 2.4 KB gzip) with zero runtime dependencies. Tracks pageviews (including SPA history transitions) and clicks. Batches events, flushes on interval, and guarantees best-effort flush on page unload via `navigator.sendBeacon` with `fetch(keepalive)` fallback.
 - **Ingest Engine:** Express 5 HTTP server with Zod schema validation. Uses native MongoDB driver with unordered bulk inserts (`ordered: false`) to handle duplicate retries idempotently via unique index constraints.
-- **Analytics Dashboard:** React 19, TypeScript, Tailwind CSS, and Vite. Displays paginated session journeys, relative event timelines, and a canvas heatmap with viewport bucketing.
+- **Analytics Dashboard:** React 19, TypeScript, and Vite. Displays paginated session journeys, relative event timelines, and a canvas heatmap with viewport bucketing.
 - **Demo Store:** Multi-page storefront (Home, Product, Checkout) featuring a floating diagnostic chip displaying active tracking state, queued/sent event counts, and a direct link to view the current session.
 - **Automated Test Suite:** 116 passing unit and integration tests across 4 npm workspaces (`@cf/shared`, `@cf/server`, `@cf/tracker`, `@cf/dashboard`) running against real MongoDB instances in CI.
 
@@ -149,11 +149,11 @@ flowchart LR
 ### Event Lifecycle
 
 1. **Initialization & Privacy Check:** `cf.js` executes immediately in an isolated IIFE. It checks `navigator.doNotTrack` and `navigator.globalPrivacyControl`. If privacy signals are active, tracking pauses with zero network egress. The top-frame guard (`window !== window.top`) prevents tracking inside iframes (such as the dashboard heatmap preview), and `?cf_ignore` disables tracking for administrative inspection.
-2. **Session Assignment:** A deterministic UUID v4 session ID is created and stored in `localStorage` (with a cookie fallback). Sessions reset automatically after 30 minutes of inactivity.
+2. **Session Assignment:** A random UUID v4 session ID is created and stored in `localStorage` (with a cookie fallback). Sessions reset automatically after 30 minutes of inactivity.
 3. **Event Buffering:**
    - **Pageviews:** Dispatched on initial load and on client-side routing (`pushState`, `replaceState`, `popstate`) whenever the normalized path changes.
    - **Clicks:** Captured via document capture listener. Captures document scroll-relative coordinates (`pageX`, `pageY`), document dimensions (`doc_w`, `doc_h`), viewport size (`vw`, `vh`), and a clean CSS selector (`sel`). Input values (`.value`) and inner text are strictly excluded.
-4. **Resilient Flush:** Events are queued in memory (capped at 100 events). Flushes trigger every 3 seconds, upon collecting 10 events, or on page hide / unload via `navigator.sendBeacon` (using a `text/plain` Blob payload to bypass CORS preflights). If beaconing is unsupported, `fetch` with `keepalive: true` is used. Failed network attempts retry with exponential backoff up to 3 times.
+4. **Best-Effort Flush:** Events are queued in memory (capped at 100 events). Flushes trigger every 3 seconds, upon collecting 10 events, or on page hide / unload via `navigator.sendBeacon` (using a `text/plain` Blob payload to bypass CORS preflights). `sendBeacon` hands data to the browser for delivery; if the browser refuses the request, the tracker falls back to `fetch` with `keepalive: true` and retries with exponential backoff up to 3 times. Delivery is best-effort — `sendBeacon` returning `true` means queued, not stored.
 5. **Idempotent Storage & Ingestion:** The server assigns server-side fields (`received_at`, `vw_bucket`, `src: "live"`, sanitized `path`). It executes unordered batch inserts (`insertMany(docs, { ordered: false })`). Thanks to the unique index on `{ eid: 1 }`, retried network batches skip duplicate events seamlessly while storing all new events, returning an accurate breakdown: `202 { accepted, duplicates, rejected }`.
 
 ---
@@ -165,7 +165,7 @@ All endpoints communicate using JSON and follow a consistent error format:
 ```json
 {
   "error": {
-    "code": "BAD_REQUEST | NOT_FOUND | INGEST_DISABLED | INTERNAL_ERROR",
+    "code": "BAD_REQUEST | NOT_FOUND | INGEST_DISABLED | INTERNAL_SERVER_ERROR | DATABASE_UNAVAILABLE | RATE_LIMIT_EXCEEDED",
     "message": "Descriptive error message"
   }
 }
@@ -179,7 +179,7 @@ All endpoints communicate using JSON and follow a consistent error format:
 | `GET`  | `/api/pages`               | Summarizes unique page paths ranked by total clicks and views.   | None                                                                     |
 | `GET`  | `/api/heatmap`             | Retrieves click coordinates for a path within a viewport bucket. | `path` (required), `bucket` (`desktop` \| `tablet` \| `mobile`), `limit` |
 | `GET`  | `/health`                  | Liveness health check.                                           | Returns `{ status: "ok" }`                                               |
-| `GET`  | `/ready`                   | Readiness check verifying database connectivity.                 | Returns `{ status: "ok", db: "connected" }`                              |
+| `GET`  | `/ready`                   | Readiness check verifying database connectivity.                 | Returns `{ status: "ready" }`                                            |
 
 ---
 
@@ -214,7 +214,8 @@ Rendering clicks accurately across diverse display resolutions requires a normal
 The tracking agent is engineered with strict data minimization principles:
 
 - **No Form Data or Input Values:** Input values, password fields, textareas, and select choices are never read or stored.
-- **No Inner Text or DOM Content:** Element selectors record only structural hierarchy (`tag`, `id`, and primary class names) up to 120 characters, omitting inner text, HTML attributes, and query parameters.
+- **No Inner Text or DOM Content:** Element selectors record only structural hierarchy (`tag`, `id`, and primary class names) up to 120 characters, omitting inner text and HTML attributes.
+- **No Query Strings Stored:** The server strips query parameters and hash fragments from URLs before persistence, preventing accidental storage of tokens, emails, or other sensitive data that may appear in URL parameters.
 - **No IP Address or User-Agent Logging:** Client IPs and raw user agents are stripped prior to persistence.
 - **Honoring User Consent Signals:** `cf.js` checks `navigator.doNotTrack` and `navigator.globalPrivacyControl`. When enabled, tracking halts immediately. In the demo store, visitors can use the diagnostic status chip to review the paused state or grant explicit local testing opt-in.
 - **Self-Tracking Prevention:** The tracker verifies `window === window.top`. When running inside an iframe (such as during heatmap preview generation), tracking is deactivated to protect analytic integrity.

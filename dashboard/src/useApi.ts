@@ -35,6 +35,7 @@ export function useApi<T>(endpoint: string | null): UseApiResult<T> {
     const controller = new AbortController();
     const { signal } = controller;
 
+    setData(null);
     setLoading(true);
     setError(null);
     startTimeRef.current = Date.now();

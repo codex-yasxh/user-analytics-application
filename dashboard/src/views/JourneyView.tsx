@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useApi } from '../useApi.js';
 import type { SessionEventsResponse } from '../api.js';

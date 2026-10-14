@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -11,7 +10,7 @@ import { JourneyView } from './views/JourneyView.js';
 import { HeatmapView } from './views/HeatmapView.js';
 import { DEMO_ORIGIN } from './api.js';
 
-export function App() {
+function App() {
   return (
     <BrowserRouter>
       <div

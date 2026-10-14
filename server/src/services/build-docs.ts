@@ -30,10 +30,13 @@ export function buildDocs(
     }
 
     const event = parsed.data;
+    const urlObj = new URL(event.url);
+    const cleanUrl = `${urlObj.origin}${urlObj.pathname}`;
+
     const base = {
       eid: event.eid,
       session_id: event.session_id,
-      url: event.url,
+      url: cleanUrl,
       path: normalizePath(event.url),
       ts: resolveTs(event.ts, received),
       received_at: received,

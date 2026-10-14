@@ -1,4 +1,3 @@
-import cors from 'cors';
 import express, { type Request, type Response, Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { MongoBulkWriteError, type Db, type Document } from 'mongodb';
@@ -34,11 +33,8 @@ export function createEventsRouter({
       })
     : (_req: Request, _res: Response, next: () => void) => next();
 
-  router.options('/api/events', cors({ origin: '*' }));
-
   router.post(
     '/api/events',
-    cors({ origin: '*' }),
     limiter,
     express.text({ type: 'text/plain', limit: BODY_LIMIT }),
     express.json({ limit: BODY_LIMIT }),

@@ -38,32 +38,8 @@ export function setDb(database: Db): void {
   db = database;
 }
 
-export function getDb(): Db {
-  if (!db) {
-    throw new Error('Database not initialized. Call connectDb first.');
-  }
-  return db;
-}
-
-export async function pingDb(fallbackUrl?: string): Promise<boolean> {
-  try {
-    if (!client || !db) {
-      if (fallbackUrl) {
-        await connectDb(fallbackUrl);
-      } else {
-        return false;
-      }
-    }
-    const res = await db!.admin().ping();
-    return Boolean(res.ok);
-  } catch {
-    return false;
-  }
-}
-
-export async function syncIndexes(database?: Db): Promise<string[]> {
-  const targetDb = database || getDb();
-  const collection = targetDb.collection('events');
+export async function syncIndexes(database: Db): Promise<string[]> {
+  const collection = database.collection('events');
   return collection.createIndexes(INDEX_DEFINITIONS);
 }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useApi } from '../useApi.js';
 import type { SessionsResponse } from '../api.js';

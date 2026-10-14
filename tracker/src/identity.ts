@@ -1,17 +1,10 @@
 import { SESSION_IDLE_MS } from '@cf/shared/constants';
+import { safe } from './safe.js';
 
 const SESSION_KEY = 'cf_session_id';
 const TOUCHED_KEY = 'cf_session_touched_at';
 const OPT_IN_KEY = 'cf_explicit_opt_in';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
-
-function safe<T>(fn: () => T, fallback: T): T {
-  try {
-    return fn();
-  } catch {
-    return fallback;
-  }
-}
 
 function cookie(win: Window, name: string): string | null {
   const prefix = `${name}=`;

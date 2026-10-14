@@ -37,7 +37,9 @@ describe('fixtures verification', () => {
   });
 
   it('all API fixtures are valid JSON', () => {
-    const files = readdirSync(apiFixturesDir).filter((f) => f.endsWith('.json'));
+    const files = readdirSync(apiFixturesDir).filter((f) =>
+      f.endsWith('.json'),
+    );
     expect(files.length).toBeGreaterThan(0);
 
     for (const file of files) {

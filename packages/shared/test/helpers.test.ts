@@ -4,7 +4,11 @@ import { normalizePath } from '../src/normalize-path.js';
 import { resolveTs } from '../src/resolve-ts.js';
 
 describe('normalizePath', () => {
-  const cases: Array<{ input: string; expected: string | 'throws'; description: string }> = [
+  const cases: Array<{
+    input: string;
+    expected: string | 'throws';
+    description: string;
+  }> = [
     {
       description: 'strips query and hash from path',
       input: 'https://demo.example.com/products?utm=1#top',
@@ -37,17 +41,23 @@ describe('normalizePath', () => {
     },
   ];
 
-  it.each(cases)('$description: normalizePath("$input")', ({ input, expected }) => {
-    if (expected === 'throws') {
-      expect(() => normalizePath(input)).toThrow();
-    } else {
-      expect(normalizePath(input)).toBe(expected);
-    }
-  });
+  it.each(cases)(
+    '$description: normalizePath("$input")',
+    ({ input, expected }) => {
+      if (expected === 'throws') {
+        expect(() => normalizePath(input)).toThrow();
+      } else {
+        expect(normalizePath(input)).toBe(expected);
+      }
+    },
+  );
 });
 
 describe('bucketOf', () => {
-  const cases: Array<{ input: number; expected: 'mobile' | 'tablet' | 'desktop' }> = [
+  const cases: Array<{
+    input: number;
+    expected: 'mobile' | 'tablet' | 'desktop';
+  }> = [
     { input: 389, expected: 'mobile' },
     { input: 767, expected: 'mobile' },
     { input: 768, expected: 'tablet' },

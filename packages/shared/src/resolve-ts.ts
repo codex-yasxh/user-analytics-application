@@ -7,9 +7,10 @@ import { TS_WINDOW_MS } from './constants.js';
  */
 export function resolveTs(
   clientTs: string | Date | undefined | null,
-  receivedAt: string | Date = new Date()
+  receivedAt: string | Date = new Date(),
 ): Date {
-  const receivedDate = receivedAt instanceof Date ? receivedAt : new Date(receivedAt);
+  const receivedDate =
+    receivedAt instanceof Date ? receivedAt : new Date(receivedAt);
   const receivedMs = receivedDate.getTime();
 
   if (!clientTs) {

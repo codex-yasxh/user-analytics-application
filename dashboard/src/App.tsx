@@ -10,6 +10,49 @@ import { JourneyView } from './views/JourneyView.js';
 import { HeatmapView } from './views/HeatmapView.js';
 import { DEMO_ORIGIN } from './api.js';
 
+const NAV_ITEMS = [
+  {
+    to: '/sessions',
+    label: 'Sessions',
+    icon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="2" y="3" width="12" height="10" rx="1.5" />
+        <path d="M2 6h12" />
+        <path d="M5 6v7" />
+      </svg>
+    ),
+  },
+  {
+    to: '/heatmap',
+    label: 'Heatmap',
+    icon: (
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="8" cy="8" r="6" />
+        <circle cx="8" cy="8" r="3" />
+        <circle cx="8" cy="8" r="1" />
+      </svg>
+    ),
+  },
+];
+
 function App() {
   return (
     <BrowserRouter>
@@ -17,22 +60,26 @@ function App() {
         style={{
           minHeight: '100vh',
           display: 'flex',
-          flexDirection: 'column',
           backgroundColor: '#ffffff',
         }}
       >
-        <header
+        {/* Sidebar */}
+        <aside
           style={{
-            borderBottom: '1px solid #e5e7eb',
-            padding: '0 24px',
-            height: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            width: '200px',
             flexShrink: 0,
+            borderRight: '1px solid #f3f4f6',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px 0',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <div
+            style={{
+              padding: '0 20px',
+              marginBottom: '32px',
+            }}
+          >
             <span
               style={{
                 fontWeight: 600,
@@ -43,53 +90,64 @@ function App() {
             >
               CausalFunnel
             </span>
-            <nav style={{ display: 'flex', gap: '4px' }}>
-              {[
-                { to: '/sessions', label: 'Sessions' },
-                { to: '/heatmap', label: 'Heatmap' },
-              ].map(({ to, label }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  style={({ isActive }) => ({
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    textDecoration: 'none',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    color: isActive ? '#111827' : '#6b7280',
-                    backgroundColor: isActive ? '#f3f4f6' : 'transparent',
-                    transition: 'background-color 0.15s',
-                  })}
-                >
-                  {label}
-                </NavLink>
-              ))}
-            </nav>
           </div>
 
-          <a
-            href={`${DEMO_ORIGIN}/demo/home.html`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <nav
             style={{
-              fontSize: '13px',
-              color: '#6b7280',
-              textDecoration: 'none',
-              fontWeight: 500,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px',
+              padding: '0 8px',
+              flex: 1,
             }}
           >
-            Demo Store
-          </a>
-        </header>
+            {NAV_ITEMS.map(({ to, label, icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                style={({ isActive }) => ({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: isActive ? '#111827' : '#6b7280',
+                  backgroundColor: isActive ? '#f3f4f6' : 'transparent',
+                  transition: 'background-color 0.15s',
+                })}
+              >
+                {icon}
+                {label}
+              </NavLink>
+            ))}
+          </nav>
 
+          <div style={{ padding: '0 20px' }}>
+            <a
+              href={`${DEMO_ORIGIN}/demo/home.html`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '12px',
+                color: '#9ca3af',
+                textDecoration: 'none',
+              }}
+            >
+              Open Demo Store &rarr;
+            </a>
+          </div>
+        </aside>
+
+        {/* Main content */}
         <main
           style={{
             flex: 1,
-            padding: '32px 24px',
+            minWidth: 0,
+            padding: '32px 40px',
             maxWidth: '1200px',
-            width: '100%',
-            margin: '0 auto',
           }}
         >
           <Routes>

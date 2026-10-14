@@ -10,7 +10,13 @@ interface HotspotRect {
   h: number;
 }
 
-type HotspotsMap = Record<string, Record<string, HotspotRect[]>>;
+interface PageCapture {
+  doc_w: number;
+  doc_h: number;
+  hotspots: HotspotRect[];
+}
+
+type HotspotsMap = Record<string, Record<string, PageCapture>>;
 
 const WIDTHS = [
   { name: 'desktop', width: 1280, height: 800 },
@@ -57,6 +63,11 @@ async function captureHotspots(): Promise<void> {
       await page.goto(`file://${filePath.replace(/\\/g, '/')}?cf_ignore`);
       await page.waitForLoadState('domcontentloaded');
 
+      const dims = await page.evaluate(() => ({
+        doc_w: document.documentElement.scrollWidth,
+        doc_h: document.documentElement.scrollHeight,
+      }));
+
       const rects: HotspotRect[] = [];
 
       for (const sel of pageConf.selectors) {
@@ -77,7 +88,11 @@ async function captureHotspots(): Promise<void> {
         }
       }
 
-      hotspots[vp.name][pageName] = rects;
+      hotspots[vp.name][pageName] = {
+        doc_w: dims.doc_w,
+        doc_h: dims.doc_h,
+        hotspots: rects,
+      };
     }
 
     await context.close();

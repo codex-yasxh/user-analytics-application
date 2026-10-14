@@ -24,9 +24,7 @@ export function scalePoint(
 
   const scaleX = renderWidth / point.doc_w;
   const scaleY =
-    renderHeight && point.doc_h > 0
-      ? renderHeight / point.doc_h
-      : scaleX;
+    renderHeight && point.doc_h > 0 ? renderHeight / point.doc_h : scaleX;
 
   return {
     px: Math.round(point.x * scaleX),

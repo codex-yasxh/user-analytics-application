@@ -13,70 +13,127 @@ interface HotspotRect {
   h: number;
 }
 
-const FALLBACK_HOTSPOTS: Record<string, Record<string, HotspotRect[]>> = {
+interface PageCapture {
+  doc_w: number;
+  doc_h: number;
+  hotspots: HotspotRect[];
+}
+
+const VIEWPORT_DEFAULTS: Record<string, { vw: number; vh: number }> = {
+  desktop: { vw: 1280, vh: 800 },
+  tablet: { vw: 768, vh: 1024 },
+  mobile: { vw: 390, vh: 844 },
+};
+
+const FALLBACK: Record<string, Record<string, PageCapture>> = {
   desktop: {
-    home: [
-      { selector: 'a.nav-products', x: 1040, y: 25, w: 75, h: 24 },
-      { selector: 'button.add-to-cart', x: 260, y: 430, w: 180, h: 38 },
-      { selector: 'button.add-to-cart', x: 610, y: 430, w: 180, h: 38 },
-      { selector: 'button.add-to-cart', x: 960, y: 430, w: 180, h: 38 },
-    ],
-    product: [
-      { selector: 'a.nav-products', x: 1040, y: 25, w: 75, h: 24 },
-      { selector: 'button.add-to-cart', x: 670, y: 470, w: 140, h: 48 },
-      { selector: 'button.buy-now', x: 830, y: 470, w: 140, h: 48 },
-      { selector: 'button.quick-view', x: 670, y: 535, w: 170, h: 36 },
-    ],
-    checkout: [
-      { selector: 'input#name', x: 340, y: 170, w: 280, h: 38 },
-      { selector: 'button.place-order', x: 340, y: 390, w: 280, h: 44 },
-    ],
+    home: {
+      doc_w: 1280,
+      doc_h: 800,
+      hotspots: [
+        { selector: 'a.nav-products', x: 1021, y: 30, w: 61, h: 20 },
+        { selector: 'button.add-to-cart', x: 263, y: 624, w: 295, h: 36 },
+        { selector: 'button.add-to-cart', x: 640, y: 624, w: 295, h: 36 },
+        { selector: 'button.add-to-cart', x: 1017, y: 624, w: 295, h: 36 },
+      ],
+    },
+    product: {
+      doc_w: 1280,
+      doc_h: 800,
+      hotspots: [
+        { selector: 'a.nav-products', x: 1021, y: 30, w: 61, h: 20 },
+        { selector: 'button.add-to-cart', x: 734, y: 469, w: 139, h: 46 },
+        { selector: 'button.buy-now', x: 879, y: 469, w: 120, h: 46 },
+        { selector: 'button.quick-view', x: 760, y: 525, w: 192, h: 34 },
+      ],
+    },
+    checkout: {
+      doc_w: 1280,
+      doc_h: 800,
+      hotspots: [
+        { selector: 'input#name', x: 428, y: 264, w: 376, h: 38 },
+        { selector: 'button.place-order', x: 428, y: 573, w: 376, h: 42 },
+      ],
+    },
   },
   tablet: {
-    home: [
-      { selector: 'a.nav-products', x: 620, y: 25, w: 65, h: 24 },
-      { selector: 'button.add-to-cart', x: 230, y: 410, w: 160, h: 38 },
-      { selector: 'button.add-to-cart', x: 530, y: 410, w: 160, h: 38 },
-    ],
-    product: [
-      { selector: 'a.nav-products', x: 620, y: 25, w: 65, h: 24 },
-      { selector: 'button.add-to-cart', x: 440, y: 450, w: 130, h: 44 },
-      { selector: 'button.buy-now', x: 585, y: 450, w: 130, h: 44 },
-    ],
-    checkout: [
-      { selector: 'button.place-order', x: 240, y: 380, w: 280, h: 44 },
-    ],
+    home: {
+      doc_w: 768,
+      doc_h: 1024,
+      hotspots: [
+        { selector: 'a.nav-products', x: 509, y: 30, w: 61, h: 20 },
+        { selector: 'button.add-to-cart', x: 200, y: 624, w: 286, h: 36 },
+        { selector: 'button.add-to-cart', x: 568, y: 624, w: 286, h: 36 },
+      ],
+    },
+    product: {
+      doc_w: 768,
+      doc_h: 1024,
+      hotspots: [
+        { selector: 'a.nav-products', x: 509, y: 30, w: 61, h: 20 },
+        { selector: 'button.add-to-cart', x: 94, y: 897, w: 139, h: 46 },
+        { selector: 'button.buy-now', x: 239, y: 897, w: 120, h: 46 },
+      ],
+    },
+    checkout: {
+      doc_w: 768,
+      doc_h: 1024,
+      hotspots: [
+        { selector: 'button.place-order', x: 384, y: 555, w: 720, h: 42 },
+      ],
+    },
   },
   mobile: {
-    home: [
-      { selector: 'a.nav-products', x: 290, y: 22, w: 60, h: 22 },
-      { selector: 'button.add-to-cart', x: 195, y: 460, w: 160, h: 38 },
-    ],
-    product: [
-      { selector: 'button.add-to-cart', x: 120, y: 520, w: 140, h: 44 },
-      { selector: 'button.buy-now', x: 270, y: 520, w: 100, h: 44 },
-    ],
-    checkout: [
-      { selector: 'button.place-order', x: 195, y: 420, w: 320, h: 44 },
-    ],
+    home: {
+      doc_w: 390,
+      doc_h: 844,
+      hotspots: [
+        { selector: 'a.nav-products', x: 261, y: 33, w: 61, h: 20 },
+        { selector: 'button.add-to-cart', x: 195, y: 728, w: 276, h: 36 },
+      ],
+    },
+    product: {
+      doc_w: 390,
+      doc_h: 844,
+      hotspots: [
+        { selector: 'button.add-to-cart', x: 94, y: 993, w: 139, h: 46 },
+        { selector: 'button.buy-now', x: 239, y: 993, w: 120, h: 46 },
+      ],
+    },
+    checkout: {
+      doc_w: 390,
+      doc_h: 844,
+      hotspots: [
+        { selector: 'button.place-order', x: 195, y: 600, w: 342, h: 42 },
+      ],
+    },
   },
 };
 
-function loadHotspots(): Record<string, Record<string, HotspotRect[]>> {
+function loadHotspots(): Record<string, Record<string, PageCapture>> {
   const jsonPath = path.resolve(process.cwd(), 'scripts', 'hotspots.json');
   try {
     const raw = fs.readFileSync(jsonPath, 'utf8');
-    return JSON.parse(raw) as Record<string, Record<string, HotspotRect[]>>;
+    const parsed = JSON.parse(raw) as Record<string, Record<string, unknown>>;
+    const first = Object.values(Object.values(parsed)[0])[0];
+    if (first && typeof first === 'object' && 'doc_w' in first) {
+      return parsed as Record<string, Record<string, PageCapture>>;
+    }
+    // Old format (array of rects without page dims) — wrap with viewport defaults
+    const legacy = parsed as Record<string, Record<string, HotspotRect[]>>;
+    const result: Record<string, Record<string, PageCapture>> = {};
+    for (const [bucket, pages] of Object.entries(legacy)) {
+      result[bucket] = {};
+      const vp = VIEWPORT_DEFAULTS[bucket] ?? { vw: 1280, vh: 800 };
+      for (const [page, rects] of Object.entries(pages)) {
+        result[bucket][page] = { doc_w: vp.vw, doc_h: vp.vh, hotspots: rects };
+      }
+    }
+    return result;
   } catch {
-    return FALLBACK_HOTSPOTS;
+    return FALLBACK;
   }
 }
-
-const VIEWPORT_SIZES = {
-  desktop: { vw: 1280, vh: 800, doc_w: 1280, doc_h: 1200 },
-  tablet: { vw: 768, vh: 1024, doc_w: 768, doc_h: 1400 },
-  mobile: { vw: 390, vh: 844, doc_w: 390, doc_h: 1800 },
-};
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
@@ -105,7 +162,6 @@ export async function seedDatabase(
   const db = client.db();
   const collection = db.collection('events');
 
-  // Delete previous seed data for idempotency
   await collection.deleteMany({ src: 'seed' });
 
   const homeUrl = `${demoOrigin}/demo/home.html`;
@@ -142,16 +198,56 @@ export async function seedDatabase(
   const windowMs = now - PROJECT_START;
   const allEvents: SeedEventDoc[] = [];
 
+  function addClick(
+    sessionId: string,
+    currentTime: number,
+    url: string,
+    pagePath: string,
+    bucket: string,
+    pageName: string,
+  ): number {
+    const vp = VIEWPORT_DEFAULTS[bucket];
+    const pageCapture = HOTSPOTS[bucket]?.[pageName];
+    if (!pageCapture || pageCapture.hotspots.length === 0) return currentTime;
+
+    const target =
+      pageCapture.hotspots[
+        Math.floor(Math.random() * pageCapture.hotspots.length)
+      ];
+    const x = Math.round(target.x + randomBetween(-target.w / 3, target.w / 3));
+    const y = Math.round(target.y + randomBetween(-target.h / 3, target.h / 3));
+
+    allEvents.push({
+      eid: crypto.randomUUID(),
+      session_id: sessionId,
+      type: 'click',
+      url,
+      path: pagePath,
+      ts: new Date(currentTime),
+      received_at: new Date(currentTime + 50),
+      src: 'seed',
+      vw: vp.vw,
+      vh: vp.vh,
+      vw_bucket: bucketOf(vp.vw),
+      x,
+      y,
+      doc_w: pageCapture.doc_w,
+      doc_h: pageCapture.doc_h,
+      sel: target.selector,
+    });
+
+    return currentTime + Math.floor(randomBetween(1500, 5000));
+  }
+
   for (let s = 0; s < sessionCount; s++) {
     const sessionId = crypto.randomUUID();
     const sessionStartTime =
       PROJECT_START + Math.floor(Math.random() * windowMs);
     let currentTime = sessionStartTime;
 
-    // Pick bucket: 60% desktop, 25% tablet, 15% mobile
     const rand = Math.random();
     const bucket = rand < 0.6 ? 'desktop' : rand < 0.85 ? 'tablet' : 'mobile';
-    const vp = VIEWPORT_SIZES[bucket];
+    const vp = VIEWPORT_DEFAULTS[bucket];
 
     // Page 1: Home
     allEvents.push({
@@ -170,42 +266,19 @@ export async function seedDatabase(
 
     currentTime += Math.floor(randomBetween(2000, 8000));
 
-    // Home clicks
-    const homeHotspots = HOTSPOTS[bucket].home;
     const homeClickCount = Math.floor(randomBetween(1, 3));
     for (let c = 0; c < homeClickCount; c++) {
-      const target =
-        homeHotspots[Math.floor(Math.random() * homeHotspots.length)];
-      const x = Math.round(
-        target.x + randomBetween(-target.w / 3, target.w / 3),
+      currentTime = addClick(
+        sessionId,
+        currentTime,
+        homeUrl,
+        paths.home,
+        bucket,
+        'home',
       );
-      const y = Math.round(
-        target.y + randomBetween(-target.h / 3, target.h / 3),
-      );
-
-      allEvents.push({
-        eid: crypto.randomUUID(),
-        session_id: sessionId,
-        type: 'click',
-        url: homeUrl,
-        path: paths.home,
-        ts: new Date(currentTime),
-        received_at: new Date(currentTime + 50),
-        src: 'seed',
-        vw: vp.vw,
-        vh: vp.vh,
-        vw_bucket: bucketOf(vp.vw),
-        x,
-        y,
-        doc_w: vp.doc_w,
-        doc_h: vp.doc_h,
-        sel: target.selector,
-      });
-
-      currentTime += Math.floor(randomBetween(1500, 5000));
     }
 
-    // 70% of sessions proceed to product page
+    // 70% proceed to product
     if (Math.random() < 0.7) {
       allEvents.push({
         eid: crypto.randomUUID(),
@@ -223,42 +296,19 @@ export async function seedDatabase(
 
       currentTime += Math.floor(randomBetween(3000, 10000));
 
-      // Product clicks
-      const productHotspots = HOTSPOTS[bucket].product;
       const productClickCount = Math.floor(randomBetween(1, 3));
       for (let c = 0; c < productClickCount; c++) {
-        const target =
-          productHotspots[Math.floor(Math.random() * productHotspots.length)];
-        const x = Math.round(
-          target.x + randomBetween(-target.w / 3, target.w / 3),
+        currentTime = addClick(
+          sessionId,
+          currentTime,
+          productUrl,
+          paths.product,
+          bucket,
+          'product',
         );
-        const y = Math.round(
-          target.y + randomBetween(-target.h / 3, target.h / 3),
-        );
-
-        allEvents.push({
-          eid: crypto.randomUUID(),
-          session_id: sessionId,
-          type: 'click',
-          url: productUrl,
-          path: paths.product,
-          ts: new Date(currentTime),
-          received_at: new Date(currentTime + 50),
-          src: 'seed',
-          vw: vp.vw,
-          vh: vp.vh,
-          vw_bucket: bucketOf(vp.vw),
-          x,
-          y,
-          doc_w: vp.doc_w,
-          doc_h: vp.doc_h,
-          sel: target.selector,
-        });
-
-        currentTime += Math.floor(randomBetween(2000, 6000));
       }
 
-      // 40% of sessions proceed to checkout
+      // 40% proceed to checkout
       if (Math.random() < 0.4) {
         allEvents.push({
           eid: crypto.randomUUID(),
@@ -276,39 +326,18 @@ export async function seedDatabase(
 
         currentTime += Math.floor(randomBetween(4000, 12000));
 
-        const checkoutHotspots = HOTSPOTS[bucket].checkout;
-        const target =
-          checkoutHotspots[Math.floor(Math.random() * checkoutHotspots.length)];
-        const x = Math.round(
-          target.x + randomBetween(-target.w / 4, target.w / 4),
+        currentTime = addClick(
+          sessionId,
+          currentTime,
+          checkoutUrl,
+          paths.checkout,
+          bucket,
+          'checkout',
         );
-        const y = Math.round(
-          target.y + randomBetween(-target.h / 4, target.h / 4),
-        );
-
-        allEvents.push({
-          eid: crypto.randomUUID(),
-          session_id: sessionId,
-          type: 'click',
-          url: checkoutUrl,
-          path: paths.checkout,
-          ts: new Date(currentTime),
-          received_at: new Date(currentTime + 50),
-          src: 'seed',
-          vw: vp.vw,
-          vh: vp.vh,
-          vw_bucket: bucketOf(vp.vw),
-          x,
-          y,
-          doc_w: vp.doc_w,
-          doc_h: vp.doc_h,
-          sel: target.selector,
-        });
       }
     }
   }
 
-  // Insert all seed events in batches
   if (allEvents.length > 0) {
     await collection.insertMany(allEvents, { ordered: false });
   }
@@ -318,7 +347,6 @@ export async function seedDatabase(
   return { sessionsCount: sessionCount, eventsCount: allEvents.length };
 }
 
-// Direct execution from CLI
 if (
   process.argv[1]?.endsWith('seed.ts') ||
   process.argv[1]?.endsWith('seed.js')

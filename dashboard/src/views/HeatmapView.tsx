@@ -23,9 +23,7 @@ const BUCKET_WIDTHS: Record<string, number> = {
 
 function isRenderableDemoPath(path: string): boolean {
   try {
-    const demoUrl = new URL(DEMO_ORIGIN);
-    const targetUrl = new URL(path);
-    return targetUrl.origin === demoUrl.origin;
+    return new URL(path).origin === new URL(DEMO_ORIGIN).origin;
   } catch {
     return false;
   }
@@ -34,7 +32,6 @@ function isRenderableDemoPath(path: string): boolean {
 export function HeatmapView() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Load available paths
   const {
     data: pagesData,
     loading: pagesLoading,
@@ -42,7 +39,6 @@ export function HeatmapView() {
     error: pagesError,
   } = useApi<PageItem[]>('/api/pages');
 
-  // Compute selected path and bucket from URL
   const selectedBucket = searchParams.get('bucket') || 'desktop';
   const selectedPath =
     searchParams.get('path') ||
@@ -50,7 +46,6 @@ export function HeatmapView() {
 
   const referenceWidth = BUCKET_WIDTHS[selectedBucket] || 1280;
 
-  // Fetch heatmap data for selected path and bucket
   const heatmapEndpoint = selectedPath
     ? `/api/heatmap?path=${encodeURIComponent(selectedPath)}&bucket=${selectedBucket}&limit=5000`
     : null;
@@ -78,28 +73,23 @@ export function HeatmapView() {
     [selectedPath],
   );
 
-  // Build the demo iframe URL with the required ?cf_ignore parameter
   const iframeSrc = useMemo(() => {
     if (!isRenderable || !selectedPath) return '';
     const sep = selectedPath.includes('?') ? '&' : '?';
     return `${selectedPath}${sep}cf_ignore=1`;
   }, [isRenderable, selectedPath]);
 
-  // Adjust iframe height when demo content loads
   const handleIframeLoad = () => {
     try {
       const doc = iframeRef.current?.contentDocument;
       if (doc?.documentElement) {
-        const height = Math.max(doc.documentElement.scrollHeight, 800);
-        setIframeHeight(height);
+        setIframeHeight(Math.max(doc.documentElement.scrollHeight, 800));
       }
     } catch {
-      // Cross-origin fallback height
       setIframeHeight(800);
     }
   };
 
-  // Draw heatmap overlay
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !heatmapData) return;
@@ -127,21 +117,19 @@ export function HeatmapView() {
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
-    // If grid fallback for non-hosted path
     if (!isRenderable) {
-      ctx.fillStyle = '#f9fafb';
+      ctx.fillStyle = '#fafafa';
       ctx.fillRect(0, 0, width, height);
-
-      ctx.strokeStyle = '#e5e7eb';
+      ctx.strokeStyle = '#f3f4f6';
       ctx.lineWidth = 1;
-      const gridSize = 40;
-      for (let x = 0; x < width; x += gridSize) {
+      const g = 40;
+      for (let x = 0; x < width; x += g) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
-      for (let y = 0; y < height; y += gridSize) {
+      for (let y = 0; y < height; y += g) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
@@ -149,33 +137,32 @@ export function HeatmapView() {
       }
     }
 
-    // Draw points with radial gradient and additive alpha
     ctx.globalCompositeOperation = 'lighter';
 
     for (const point of heatmapData.points) {
       try {
         const { px, py } = scalePoint(point, width);
-        const radius = Math.max(16, Math.min(32, Math.round(width / 35)));
+        const r = Math.max(16, Math.min(32, Math.round(width / 35)));
 
-        const gradient = ctx.createRadialGradient(px, py, 0, px, py, radius);
-        gradient.addColorStop(0, 'rgba(255, 65, 54, 0.45)');
-        gradient.addColorStop(0.5, 'rgba(255, 133, 27, 0.25)');
-        gradient.addColorStop(1, 'rgba(255, 220, 0, 0)');
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+        grad.addColorStop(0, 'rgba(255, 65, 54, 0.45)');
+        grad.addColorStop(0.5, 'rgba(255, 133, 27, 0.25)');
+        grad.addColorStop(1, 'rgba(255, 220, 0, 0)');
 
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.arc(px, py, r, 0, Math.PI * 2);
         ctx.fill();
       } catch {
-        // Skip invalid point
+        // skip
       }
     }
 
     ctx.restore();
   }, [heatmapData, referenceWidth, iframeHeight, isRenderable]);
 
-  const updateSelection = (newPath: string, newBucket: string) => {
-    setSearchParams({ path: newPath, bucket: newBucket });
+  const updateSelection = (p: string, b: string) => {
+    setSearchParams({ path: p, bucket: b });
   };
 
   const pages = pagesData || [];
@@ -184,19 +171,19 @@ export function HeatmapView() {
 
   return (
     <div>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h2
+      <div style={{ marginBottom: '24px' }}>
+        <h1
           style={{
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            margin: '0 0 0.25rem 0',
+            fontSize: '18px',
+            fontWeight: 600,
+            margin: 0,
+            color: '#111827',
           }}
         >
-          Click Heatmap
-        </h2>
-        <p style={{ color: '#6b7280', margin: 0, fontSize: '0.875rem' }}>
-          Inspect visual click density overlays across different screen
-          viewports.
+          Heatmap
+        </h1>
+        <p style={{ color: '#9ca3af', margin: '4px 0 0', fontSize: '13px' }}>
+          Click density by page and viewport.
         </p>
       </div>
 
@@ -206,155 +193,146 @@ export function HeatmapView() {
         <ErrorState message={heatmapError} onRetry={reloadHeatmap} />
       )}
 
-      {/* Controls Bar */}
+      {/* Controls */}
       <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '1rem',
-          alignItems: 'center',
-          backgroundColor: '#f9fafb',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          padding: '1rem',
-          marginBottom: '1rem',
+          gap: '16px',
+          alignItems: 'flex-end',
+          marginBottom: '24px',
         }}
       >
-        <div
-          style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}
-        >
+        <div>
           <label
-            style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4b5563' }}
+            style={{
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 500,
+              color: '#9ca3af',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: '6px',
+            }}
           >
-            Page URL:
+            Page
           </label>
           <select
             value={selectedPath}
             onChange={(e) => updateSelection(e.target.value, selectedBucket)}
             disabled={pagesLoading || pages.length === 0}
             style={{
-              padding: '0.375rem 0.75rem',
+              padding: '6px 10px',
               borderRadius: '6px',
-              border: '1px solid #d1d5db',
-              fontSize: '0.875rem',
-              minWidth: '280px',
+              border: '1px solid #e5e7eb',
+              fontSize: '13px',
+              minWidth: '260px',
               backgroundColor: '#ffffff',
+              color: '#111827',
             }}
           >
             {renderablePages.length > 0 && (
-              <optgroup label="Demo Pages (Renderable)">
+              <optgroup label="Demo Pages">
                 {renderablePages.map((p) => (
                   <option key={p.path} value={p.path}>
-                    {p.path} ({p.clicks} clicks)
+                    {p.path} ({p.clicks})
                   </option>
                 ))}
               </optgroup>
             )}
             {otherPages.length > 0 && (
-              <optgroup label="External Pages (Data Only)">
+              <optgroup label="External (data only)">
                 {otherPages.map((p) => (
                   <option key={p.path} value={p.path}>
-                    {p.path} [data only] ({p.clicks} clicks)
+                    {p.path} ({p.clicks})
                   </option>
                 ))}
               </optgroup>
             )}
-            {pages.length === 0 && <option value="">No pages available</option>}
+            {pages.length === 0 && <option value="">No pages</option>}
           </select>
         </div>
 
-        <div
-          style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}
-        >
+        <div>
           <label
-            style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4b5563' }}
-          >
-            Viewport Bucket:
-          </label>
-          <div
             style={{
-              display: 'flex',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              overflow: 'hidden',
+              display: 'block',
+              fontSize: '11px',
+              fontWeight: 500,
+              color: '#9ca3af',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              marginBottom: '6px',
             }}
           >
+            Viewport
+          </label>
+          <div style={{ display: 'flex', gap: '4px' }}>
             {(['desktop', 'tablet', 'mobile'] as const).map((b) => (
               <button
                 key={b}
                 type="button"
                 onClick={() => updateSelection(selectedPath, b)}
                 style={{
-                  padding: '0.375rem 0.75rem',
-                  border: 'none',
-                  backgroundColor: selectedBucket === b ? '#2563eb' : '#ffffff',
-                  color: selectedBucket === b ? '#ffffff' : '#374151',
+                  padding: '6px 12px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  backgroundColor: selectedBucket === b ? '#111827' : '#ffffff',
+                  color: selectedBucket === b ? '#ffffff' : '#6b7280',
                   cursor: 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: selectedBucket === b ? 600 : 400,
+                  fontSize: '13px',
+                  fontWeight: 500,
                   textTransform: 'capitalize',
                 }}
               >
-                {b} ({BUCKET_WIDTHS[b]}px)
+                {b}
               </button>
             ))}
           </div>
         </div>
 
         {heatmapData && (
-          <div
+          <span
             style={{
+              fontSize: '13px',
+              color: '#9ca3af',
               marginLeft: 'auto',
-              padding: '0.375rem 0.75rem',
-              backgroundColor: '#ecfdf5',
-              border: '1px solid #a7f3d0',
-              borderRadius: '6px',
-              color: '#065f46',
-              fontSize: '0.875rem',
-              fontWeight: 500,
+              alignSelf: 'center',
             }}
           >
-            {heatmapData.returned} of {heatmapData.total} clicks drawn (
-            {selectedBucket})
-          </div>
+            {heatmapData.returned} of {heatmapData.total} clicks
+          </span>
         )}
       </div>
 
       {!isRenderable && selectedPath && (
-        <div
+        <p
           style={{
-            padding: '0.75rem 1rem',
-            backgroundColor: '#fffbeb',
-            border: '1px solid #fde68a',
-            borderRadius: '6px',
-            color: '#92400e',
-            fontSize: '0.875rem',
-            marginBottom: '1rem',
+            fontSize: '13px',
+            color: '#9ca3af',
+            margin: '0 0 16px',
           }}
         >
-          <strong>Data Only View:</strong> Page origin does not match demo host
-          ({DEMO_ORIGIN}). Showing click positions on coordinate grid.
-        </div>
+          External page — showing positions on a coordinate grid.
+        </p>
       )}
 
       {heatmapLoading && !heatmapData && (
-        <LoadingState message="Loading heatmap data..." />
+        <LoadingState message="Loading heatmap..." />
       )}
 
       {heatmapData && heatmapData.points.length === 0 && (
         <EmptyState
-          title="No clicks in this bucket"
-          description={`There are no recorded clicks for ${selectedPath} in the ${selectedBucket} viewport bucket.`}
+          title="No clicks"
+          description={`No clicks for this page in the ${selectedBucket} bucket.`}
         />
       )}
 
-      {/* Heatmap Display Container */}
       {selectedPath && (
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
-            marginTop: '1.5rem',
             overflowX: 'auto',
           }}
         >
@@ -362,10 +340,9 @@ export function HeatmapView() {
             style={{
               position: 'relative',
               width: `${referenceWidth}px`,
-              border: '1px solid #d1d5db',
+              border: '1px solid #e5e7eb',
               borderRadius: '8px',
               overflow: 'hidden',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               backgroundColor: '#ffffff',
             }}
           >
@@ -373,7 +350,7 @@ export function HeatmapView() {
               <iframe
                 ref={iframeRef}
                 src={iframeSrc}
-                title="Heatmap Demo Page"
+                title="Heatmap preview"
                 onLoad={handleIframeLoad}
                 style={{
                   width: `${referenceWidth}px`,
@@ -398,51 +375,38 @@ export function HeatmapView() {
         </div>
       )}
 
-      {/* Top Clicked Elements Panel */}
+      {/* Top clicked elements */}
       {elementsData && elementsData.elements.length > 0 && (
-        <div
-          style={{
-            marginTop: '2rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            overflow: 'hidden',
-          }}
-        >
-          <div
+        <div style={{ marginTop: '32px' }}>
+          <h2
             style={{
-              backgroundColor: '#f9fafb',
-              padding: '0.75rem 1rem',
-              borderBottom: '1px solid #e5e7eb',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#111827',
+              margin: '0 0 12px',
             }}
           >
-            <h3
-              style={{
-                margin: 0,
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#111827',
-              }}
-            >
-              Top Clicked Elements ({selectedBucket})
-            </h3>
-          </div>
+            Top clicked elements
+          </h2>
           <table
             style={{
               width: '100%',
               borderCollapse: 'collapse',
-              fontSize: '0.875rem',
+              fontSize: '13px',
             }}
           >
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb' }}>
+              <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                 <th
                   style={{
                     textAlign: 'left',
-                    padding: '0.5rem 1rem',
-                    fontWeight: 600,
-                    color: '#4b5563',
-                    borderBottom: '1px solid #e5e7eb',
-                    width: '3rem',
+                    padding: '6px 12px',
+                    fontWeight: 500,
+                    color: '#9ca3af',
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    width: '40px',
                   }}
                 >
                   #
@@ -450,22 +414,26 @@ export function HeatmapView() {
                 <th
                   style={{
                     textAlign: 'left',
-                    padding: '0.5rem 1rem',
-                    fontWeight: 600,
-                    color: '#4b5563',
-                    borderBottom: '1px solid #e5e7eb',
+                    padding: '6px 12px',
+                    fontWeight: 500,
+                    color: '#9ca3af',
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
                   }}
                 >
-                  CSS Selector
+                  Selector
                 </th>
                 <th
                   style={{
                     textAlign: 'right',
-                    padding: '0.5rem 1rem',
-                    fontWeight: 600,
-                    color: '#4b5563',
-                    borderBottom: '1px solid #e5e7eb',
-                    width: '6rem',
+                    padding: '6px 12px',
+                    fontWeight: 500,
+                    color: '#9ca3af',
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    width: '80px',
                   }}
                 >
                   Clicks
@@ -474,39 +442,33 @@ export function HeatmapView() {
             </thead>
             <tbody>
               {elementsData.elements.map((el, i) => (
-                <tr
-                  key={el.sel}
-                  style={{
-                    backgroundColor: i % 2 === 0 ? '#ffffff' : '#f9fafb',
-                  }}
-                >
+                <tr key={el.sel} style={{ borderBottom: '1px solid #f3f4f6' }}>
                   <td
                     style={{
-                      padding: '0.5rem 1rem',
-                      color: '#9ca3af',
-                      borderBottom: '1px solid #f3f4f6',
+                      padding: '8px 12px',
+                      color: '#d1d5db',
                     }}
                   >
                     {i + 1}
                   </td>
                   <td
                     style={{
-                      padding: '0.5rem 1rem',
-                      fontFamily: 'monospace',
-                      fontSize: '0.8125rem',
-                      color: '#111827',
-                      borderBottom: '1px solid #f3f4f6',
+                      padding: '8px 12px',
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, Menlo, monospace',
+                      fontSize: '12px',
+                      color: '#374151',
                     }}
                   >
                     {el.sel}
                   </td>
                   <td
                     style={{
-                      padding: '0.5rem 1rem',
+                      padding: '8px 12px',
                       textAlign: 'right',
                       fontWeight: 600,
-                      color: '#1d4ed8',
-                      borderBottom: '1px solid #f3f4f6',
+                      color: '#111827',
+                      fontVariantNumeric: 'tabular-nums',
                     }}
                   >
                     {el.count}

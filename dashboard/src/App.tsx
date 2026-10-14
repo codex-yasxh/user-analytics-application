@@ -18,102 +18,78 @@ function App() {
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#fcfcfd',
+          backgroundColor: '#ffffff',
         }}
       >
-        {/* Navigation Bar */}
         <header
           style={{
-            backgroundColor: '#ffffff',
             borderBottom: '1px solid #e5e7eb',
-            padding: '0.75rem 2rem',
+            padding: '0 24px',
+            height: '48px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexShrink: 0,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <div
+          <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+            <span
               style={{
-                fontWeight: 800,
-                fontSize: '1.125rem',
+                fontWeight: 600,
+                fontSize: '15px',
                 color: '#111827',
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.01em',
               }}
             >
-              CausalFunnel{' '}
-              <span
-                style={{
-                  color: '#2563eb',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                }}
-              >
-                Analytics
-              </span>
-            </div>
-            <nav style={{ display: 'flex', gap: '0.5rem' }}>
-              <NavLink
-                to="/sessions"
-                style={({ isActive }) => ({
-                  padding: '0.375rem 0.75rem',
-                  borderRadius: '6px',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: isActive ? 600 : 500,
-                  color: isActive ? '#1d4ed8' : '#4b5563',
-                  backgroundColor: isActive ? '#eff6ff' : 'transparent',
-                })}
-              >
-                Sessions
-              </NavLink>
-              <NavLink
-                to="/heatmap"
-                style={({ isActive }) => ({
-                  padding: '0.375rem 0.75rem',
-                  borderRadius: '6px',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: isActive ? 600 : 500,
-                  color: isActive ? '#1d4ed8' : '#4b5563',
-                  backgroundColor: isActive ? '#eff6ff' : 'transparent',
-                })}
-              >
-                Heatmap
-              </NavLink>
+              CausalFunnel
+            </span>
+            <nav style={{ display: 'flex', gap: '4px' }}>
+              {[
+                { to: '/sessions', label: 'Sessions' },
+                { to: '/heatmap', label: 'Heatmap' },
+              ].map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  style={({ isActive }) => ({
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: isActive ? '#111827' : '#6b7280',
+                    backgroundColor: isActive ? '#f3f4f6' : 'transparent',
+                    transition: 'background-color 0.15s',
+                  })}
+                >
+                  {label}
+                </NavLink>
+              ))}
             </nav>
           </div>
 
-          <div>
-            <a
-              href={`${DEMO_ORIGIN}/demo/home.html`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontSize: '0.875rem',
-                color: '#2563eb',
-                textDecoration: 'none',
-                padding: '0.375rem 0.75rem',
-                border: '1px solid #bfdbfe',
-                borderRadius: '6px',
-                backgroundColor: '#eff6ff',
-                fontWeight: 500,
-              }}
-            >
-              Open Demo Store &rarr;
-            </a>
-          </div>
+          <a
+            href={`${DEMO_ORIGIN}/demo/home.html`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '13px',
+              color: '#6b7280',
+              textDecoration: 'none',
+              fontWeight: 500,
+            }}
+          >
+            Demo Store
+          </a>
         </header>
 
-        {/* Main Content Area */}
         <main
           style={{
             flex: 1,
-            padding: '2rem',
-            maxWidth: '1440px',
+            padding: '32px 24px',
+            maxWidth: '1200px',
             width: '100%',
             margin: '0 auto',
-            boxSizing: 'border-box',
           }}
         >
           <Routes>
@@ -124,18 +100,25 @@ function App() {
             <Route
               path="*"
               element={
-                <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                    404 - Page Not Found
-                  </h2>
-                  <p style={{ color: '#6b7280' }}>
-                    The requested dashboard page does not exist.
+                <div style={{ padding: '64px 16px', textAlign: 'center' }}>
+                  <p
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 600,
+                      color: '#111827',
+                    }}
+                  >
+                    Page not found
                   </p>
                   <NavLink
                     to="/sessions"
-                    style={{ color: '#2563eb', textDecoration: 'none' }}
+                    style={{
+                      color: '#6b7280',
+                      textDecoration: 'underline',
+                      fontSize: '13px',
+                    }}
                   >
-                    Return to Sessions
+                    Go to Sessions
                   </NavLink>
                 </div>
               }

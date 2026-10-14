@@ -1,27 +1,33 @@
 export function LoadingState({ message = 'Loading...' }: { message?: string }) {
   return (
-    <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>
+    <div
+      style={{
+        padding: '48px 16px',
+        textAlign: 'center',
+        color: '#9ca3af',
+        fontSize: '13px',
+      }}
+    >
       <div
         style={{
           display: 'inline-block',
-          width: '24px',
-          height: '24px',
-          border: '3px solid #e5e7eb',
-          borderTopColor: '#3b82f6',
+          width: '18px',
+          height: '18px',
+          border: '2px solid #e5e7eb',
+          borderTopColor: '#9ca3af',
           borderRadius: '50%',
-          animation: 'spin 1s linear infinite',
-          marginBottom: '0.5rem',
+          animation: 'spin 0.8s linear infinite',
+          marginBottom: '12px',
         }}
       />
       <div>{message}</div>
-      <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
 
 export function EmptyState({
-  title = 'No data found',
-  description = 'There are no records to display.',
+  title = 'No data',
+  description = 'Nothing to show yet.',
 }: {
   title?: string;
   description?: string;
@@ -29,24 +35,21 @@ export function EmptyState({
   return (
     <div
       style={{
-        padding: '3rem 1.5rem',
+        padding: '48px 16px',
         textAlign: 'center',
-        backgroundColor: '#f9fafb',
-        border: '1px dashed #d1d5db',
-        borderRadius: '8px',
-        margin: '1.5rem 0',
       }}
     >
-      <h3
+      <p
         style={{
-          margin: '0 0 0.5rem 0',
-          fontSize: '1.125rem',
-          color: '#111827',
+          margin: '0 0 4px',
+          fontSize: '14px',
+          fontWeight: 500,
+          color: '#374151',
         }}
       >
         {title}
-      </h3>
-      <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
+      </p>
+      <p style={{ margin: 0, color: '#9ca3af', fontSize: '13px' }}>
         {description}
       </p>
     </div>
@@ -63,31 +66,30 @@ export function ErrorState({
   return (
     <div
       style={{
-        padding: '1rem',
+        padding: '12px 16px',
         backgroundColor: '#fef2f2',
-        border: '1px solid #fecaca',
-        borderRadius: '6px',
+        borderRadius: '8px',
         color: '#991b1b',
-        margin: '1rem 0',
+        margin: '16px 0',
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
       }}
     >
-      <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Error</div>
-      <div
-        style={{ fontSize: '0.875rem', marginBottom: onRetry ? '0.75rem' : 0 }}
-      >
-        {message}
-      </div>
+      <span style={{ flex: 1 }}>{message}</span>
       {onRetry && (
         <button
           onClick={onRetry}
           style={{
-            padding: '0.25rem 0.75rem',
-            backgroundColor: '#dc2626',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
+            padding: '4px 12px',
+            backgroundColor: 'transparent',
+            color: '#991b1b',
+            border: '1px solid #fca5a5',
+            borderRadius: '6px',
+            fontSize: '13px',
             cursor: 'pointer',
+            flexShrink: 0,
           }}
         >
           Retry
@@ -101,32 +103,32 @@ export function WakingBanner() {
   return (
     <div
       style={{
-        padding: '0.75rem 1rem',
-        backgroundColor: '#eff6ff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '6px',
-        color: '#1e40af',
-        marginBottom: '1rem',
+        padding: '10px 16px',
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        color: '#6b7280',
+        marginBottom: '16px',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.75rem',
+        gap: '10px',
+        fontSize: '13px',
       }}
     >
       <div
         style={{
-          width: '16px',
-          height: '16px',
-          border: '2px solid #bfdbfe',
-          borderTopColor: '#2563eb',
+          width: '14px',
+          height: '14px',
+          border: '2px solid #e5e7eb',
+          borderTopColor: '#9ca3af',
           borderRadius: '50%',
-          animation: 'spin 1s linear infinite',
+          animation: 'spin 0.8s linear infinite',
           flexShrink: 0,
         }}
       />
-      <div>
-        <strong>API is waking up, about a minute.</strong> Retrying
-        automatically...
-      </div>
+      <span>
+        <strong style={{ fontWeight: 600 }}>Waking up</strong> — the API is
+        cold-starting, retrying automatically.
+      </span>
     </div>
   );
 }

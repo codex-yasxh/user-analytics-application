@@ -8,28 +8,16 @@ import {
   WakingBanner,
 } from '../components/SharedStates.js';
 
-function formatRelativeTime(isoDate: string): string {
+function timeAgo(isoDate: string): string {
   try {
-    const elapsedSec = Math.floor(
-      (Date.now() - new Date(isoDate).getTime()) / 1000,
-    );
-    if (elapsedSec <= 5) return 'just now';
-    if (elapsedSec < 60) return `${elapsedSec}s ago`;
-    const elapsedMin = Math.floor(elapsedSec / 60);
-    if (elapsedMin < 60) return `${elapsedMin}m ago`;
-    const elapsedHours = Math.floor(elapsedMin / 60);
-    if (elapsedHours < 24) return `${elapsedHours}h ago`;
-    const elapsedDays = Math.floor(elapsedHours / 24);
-    return `${elapsedDays}d ago`;
-  } catch {
-    return isoDate;
-  }
-}
-
-function formatTooltipTime(isoDate: string): string {
-  try {
-    const d = new Date(isoDate);
-    return `${d.toLocaleString()} (${isoDate})`;
+    const sec = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
+    if (sec <= 5) return 'just now';
+    if (sec < 60) return `${sec}s ago`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h ago`;
+    return `${Math.floor(hr / 24)}d ago`;
   } catch {
     return isoDate;
   }
@@ -49,8 +37,8 @@ export function SessionsView() {
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / limit)) : 1;
 
-  const goToPage = (newPage: number) => {
-    setSearchParams({ page: String(newPage), limit: String(limit) });
+  const goToPage = (p: number) => {
+    setSearchParams({ page: String(p), limit: String(limit) });
   };
 
   return (
@@ -59,34 +47,42 @@ export function SessionsView() {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem',
+          alignItems: 'baseline',
+          marginBottom: '24px',
         }}
       >
         <div>
-          <h2
+          <h1
             style={{
-              fontSize: '1.5rem',
-              fontWeight: 700,
-              margin: '0 0 0.25rem 0',
+              fontSize: '18px',
+              fontWeight: 600,
+              margin: 0,
+              color: '#111827',
             }}
           >
             Sessions
-          </h2>
-          <p style={{ color: '#6b7280', margin: 0, fontSize: '0.875rem' }}>
-            User sessions tracked across the application. Click a session to
-            inspect its journey.
+          </h1>
+          <p
+            style={{
+              margin: '4px 0 0',
+              color: '#9ca3af',
+              fontSize: '13px',
+            }}
+          >
+            {data ? `${data.total} total` : ''}
           </p>
         </div>
         <button
           onClick={reload}
           style={{
-            padding: '0.375rem 0.75rem',
-            border: '1px solid #d1d5db',
+            padding: '6px 14px',
+            border: '1px solid #e5e7eb',
             borderRadius: '6px',
             backgroundColor: '#ffffff',
             cursor: 'pointer',
-            fontSize: '0.875rem',
+            fontSize: '13px',
+            color: '#374151',
+            fontWeight: 500,
           }}
         >
           Refresh
@@ -95,199 +91,159 @@ export function SessionsView() {
 
       {waking && <WakingBanner />}
       {error && <ErrorState message={error} onRetry={reload} />}
-
       {loading && !data && <LoadingState message="Loading sessions..." />}
 
       {data && data.data.length === 0 && (
         <EmptyState
-          title="No sessions found"
-          description="There are no user sessions in the database yet. Visit the demo store to generate traffic."
+          title="No sessions yet"
+          description="Visit the demo store to generate traffic."
         />
       )}
 
       {data && data.data.length > 0 && (
         <>
-          <div
+          <table
             style={{
-              overflowX: 'auto',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: '13px',
             }}
           >
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                textAlign: 'left',
-                fontSize: '0.875rem',
-              }}
-            >
-              <thead>
+            <thead>
+              <tr
+                style={{
+                  borderBottom: '1px solid #e5e7eb',
+                }}
+              >
+                {[
+                  'Session',
+                  'Events',
+                  'Entry Page',
+                  'First Seen',
+                  'Last Seen',
+                ].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      textAlign: 'left',
+                      padding: '8px 12px',
+                      fontWeight: 500,
+                      color: '#9ca3af',
+                      fontSize: '11px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.data.map((s) => (
                 <tr
-                  style={{
-                    backgroundColor: '#f9fafb',
-                    borderBottom: '1px solid #e5e7eb',
-                  }}
+                  key={s.session_id}
+                  style={{ borderBottom: '1px solid #f3f4f6' }}
                 >
-                  <th
-                    style={{
-                      padding: '0.75rem 1rem',
-                      fontWeight: 600,
-                      color: '#374151',
-                    }}
-                  >
-                    Session ID
-                  </th>
-                  <th
-                    style={{
-                      padding: '0.75rem 1rem',
-                      fontWeight: 600,
-                      color: '#374151',
-                    }}
-                  >
-                    Events
-                  </th>
-                  <th
-                    style={{
-                      padding: '0.75rem 1rem',
-                      fontWeight: 600,
-                      color: '#374151',
-                    }}
-                  >
-                    Entry Path
-                  </th>
-                  <th
-                    style={{
-                      padding: '0.75rem 1rem',
-                      fontWeight: 600,
-                      color: '#374151',
-                    }}
-                  >
-                    First Seen
-                  </th>
-                  <th
-                    style={{
-                      padding: '0.75rem 1rem',
-                      fontWeight: 600,
-                      color: '#374151',
-                    }}
-                  >
-                    Last Seen
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.data.map((session, idx) => (
-                  <tr
-                    key={session.session_id}
-                    style={{
-                      borderBottom: '1px solid #f3f4f6',
-                      backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = '#eff6ff')
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        idx % 2 === 0 ? '#ffffff' : '#f9fafb')
-                    }
-                  >
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <Link
-                        to={`/sessions/${session.session_id}`}
-                        style={{
-                          color: '#2563eb',
-                          fontWeight: 500,
-                          textDecoration: 'none',
-                          fontFamily: 'monospace',
-                        }}
-                      >
-                        {session.session_id.slice(0, 8)}...
-                      </Link>
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#111827' }}>
-                      <span
-                        style={{
-                          backgroundColor: '#f3f4f6',
-                          padding: '0.125rem 0.5rem',
-                          borderRadius: '9999px',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {session.event_count}
-                      </span>
-                    </td>
-                    <td
+                  <td style={{ padding: '10px 12px' }}>
+                    <Link
+                      to={`/sessions/${s.session_id}`}
                       style={{
-                        padding: '0.75rem 1rem',
-                        color: '#4b5563',
-                        maxWidth: '300px',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        color: '#111827',
+                        textDecoration: 'none',
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, Menlo, monospace',
+                        fontSize: '13px',
+                        fontWeight: 500,
                       }}
                     >
-                      <span title={session.entry_path}>
-                        {session.entry_path}
-                      </span>
-                    </td>
-                    <td
-                      style={{ padding: '0.75rem 1rem', color: '#6b7280' }}
-                      title={formatTooltipTime(session.first_seen)}
-                    >
-                      {formatRelativeTime(session.first_seen)}
-                    </td>
-                    <td
-                      style={{ padding: '0.75rem 1rem', color: '#6b7280' }}
-                      title={formatTooltipTime(session.last_seen)}
-                    >
-                      {formatRelativeTime(session.last_seen)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      {s.session_id.slice(0, 8)}
+                    </Link>
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 12px',
+                      color: '#374151',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    {s.event_count}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 12px',
+                      color: '#6b7280',
+                      maxWidth: '280px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {s.entry_path}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 12px',
+                      color: '#9ca3af',
+                    }}
+                    title={s.first_seen}
+                  >
+                    {timeAgo(s.first_seen)}
+                  </td>
+                  <td
+                    style={{
+                      padding: '10px 12px',
+                      color: '#9ca3af',
+                    }}
+                    title={s.last_seen}
+                  >
+                    {timeAgo(s.last_seen)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginTop: '1rem',
-              fontSize: '0.875rem',
-              color: '#4b5563',
+              marginTop: '16px',
+              fontSize: '13px',
+              color: '#9ca3af',
             }}
           >
-            <div>
-              Showing page {page} of {totalPages} ({data.total} total sessions)
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <div style={{ display: 'flex', gap: '6px' }}>
               <button
                 disabled={page <= 1}
                 onClick={() => goToPage(page - 1)}
                 style={{
-                  padding: '0.375rem 0.75rem',
-                  border: '1px solid #d1d5db',
+                  padding: '5px 12px',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '6px',
-                  backgroundColor: page <= 1 ? '#f3f4f6' : '#ffffff',
-                  color: page <= 1 ? '#9ca3af' : '#111827',
-                  cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                  backgroundColor: '#ffffff',
+                  color: page <= 1 ? '#d1d5db' : '#374151',
+                  cursor: page <= 1 ? 'default' : 'pointer',
+                  fontSize: '13px',
                 }}
               >
-                Previous
+                Prev
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => goToPage(page + 1)}
                 style={{
-                  padding: '0.375rem 0.75rem',
-                  border: '1px solid #d1d5db',
+                  padding: '5px 12px',
+                  border: '1px solid #e5e7eb',
                   borderRadius: '6px',
-                  backgroundColor: page >= totalPages ? '#f3f4f6' : '#ffffff',
-                  color: page >= totalPages ? '#9ca3af' : '#111827',
-                  cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                  backgroundColor: '#ffffff',
+                  color: page >= totalPages ? '#d1d5db' : '#374151',
+                  cursor: page >= totalPages ? 'default' : 'pointer',
+                  fontSize: '13px',
                 }}
               >
                 Next

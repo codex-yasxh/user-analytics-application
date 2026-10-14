@@ -8,16 +8,15 @@ import {
   WakingBanner,
 } from '../components/SharedStates.js';
 
-function formatElapsed(startTs: number, currentTs: string): string {
+function elapsed(startTs: number, currentTs: string): string {
   try {
-    const elapsedSec = Math.max(
+    const sec = Math.max(
       0,
       Math.floor((new Date(currentTs).getTime() - startTs) / 1000),
     );
-    if (elapsedSec < 60) return `+${elapsedSec}s`;
-    const min = Math.floor(elapsedSec / 60);
-    const sec = elapsedSec % 60;
-    return `+${min}m ${sec}s`;
+    if (sec < 60) return `+${sec}s`;
+    const min = Math.floor(sec / 60);
+    return `+${min}m ${sec % 60}s`;
   } catch {
     return '+0s';
   }
@@ -29,245 +28,193 @@ export function JourneyView() {
   const { data, loading, waking, error, reload } =
     useApi<SessionEventsResponse>(endpoint);
 
-  const startTimestamp =
+  const t0 =
     data && data.events.length > 0 ? new Date(data.events[0].ts).getTime() : 0;
 
   return (
     <div>
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '24px' }}>
         <Link
           to="/sessions"
           style={{
-            color: '#2563eb',
+            color: '#9ca3af',
             textDecoration: 'none',
-            fontSize: '0.875rem',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.25rem',
-            marginBottom: '0.75rem',
+            fontSize: '13px',
+            display: 'inline-block',
+            marginBottom: '12px',
           }}
         >
-          &larr; Back to Sessions
+          &larr; Sessions
         </Link>
-        <h2
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            margin: '0 0 0.25rem 0',
-          }}
-        >
-          Session Journey
-        </h2>
         <div
           style={{
-            color: '#4b5563',
-            fontFamily: 'monospace',
-            fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: '12px',
           }}
         >
-          ID: {id}
-        </div>
-        {data && (
-          <div
+          <h1
             style={{
-              marginTop: '0.5rem',
-              display: 'flex',
-              gap: '0.75rem',
-              fontSize: '0.8125rem',
+              fontSize: '18px',
+              fontWeight: 600,
+              margin: 0,
+              color: '#111827',
             }}
           >
-            <span
-              style={{
-                backgroundColor: '#f3f4f6',
-                padding: '0.125rem 0.5rem',
-                borderRadius: '9999px',
-                color: '#374151',
-                fontWeight: 600,
-                fontFamily: 'inherit',
-              }}
-            >
+            Journey
+          </h1>
+          <span
+            style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontSize: '13px',
+              color: '#9ca3af',
+            }}
+          >
+            {id?.slice(0, 8)}
+          </span>
+          {data && (
+            <span style={{ fontSize: '13px', color: '#9ca3af' }}>
               {data.events.length} events
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {waking && <WakingBanner />}
       {error && <ErrorState message={error} onRetry={reload} />}
-
-      {loading && !data && (
-        <LoadingState message="Loading session journey..." />
-      )}
+      {loading && !data && <LoadingState message="Loading journey..." />}
 
       {data && data.truncated && (
-        <div
+        <p
           style={{
-            padding: '0.75rem 1rem',
-            backgroundColor: '#fffbeb',
-            border: '1px solid #fde68a',
-            borderRadius: '6px',
-            color: '#92400e',
-            fontSize: '0.875rem',
-            marginBottom: '1rem',
+            fontSize: '13px',
+            color: '#9ca3af',
+            margin: '0 0 16px',
           }}
         >
-          <strong>Notice:</strong> This session contains over 1,000 events.
-          Display is capped at the first 1,000 events.
-        </div>
+          Showing first 1,000 of {'>'}1,000 events.
+        </p>
       )}
 
       {data && data.events.length === 0 && (
         <EmptyState
-          title="No events found"
+          title="No events"
           description="This session has no recorded events."
         />
       )}
 
       {data && data.events.length > 0 && (
-        <div style={{ position: 'relative', paddingLeft: '2rem' }}>
-          {/* Vertical line connecting events */}
+        <div style={{ position: 'relative', paddingLeft: '24px' }}>
           <div
             style={{
               position: 'absolute',
-              left: '15px',
-              top: '12px',
-              bottom: '12px',
-              width: '2px',
+              left: '7px',
+              top: '8px',
+              bottom: '8px',
+              width: '1px',
               backgroundColor: '#e5e7eb',
             }}
           />
 
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-          >
-            {data.events.map((event, index) => {
-              const isPageView = event.type === 'page_view';
-              const elapsed = formatElapsed(startTimestamp, event.ts);
-
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {data.events.map((ev, i) => {
+              const isPV = ev.type === 'page_view';
               return (
                 <div
-                  key={event.eid || index}
+                  key={ev.eid || i}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '1rem',
+                    gap: '12px',
                     position: 'relative',
+                    padding: '8px 0',
                   }}
                 >
-                  {/* Event marker icon */}
                   <div
                     style={{
                       position: 'absolute',
-                      left: '-2rem',
-                      width: '24px',
-                      height: '24px',
+                      left: '-24px',
+                      top: '12px',
+                      width: '15px',
+                      height: '15px',
                       borderRadius: '50%',
-                      backgroundColor: isPageView ? '#3b82f6' : '#10b981',
-                      color: '#ffffff',
+                      backgroundColor: isPV ? '#e5e7eb' : '#111827',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '0.75rem',
+                      fontSize: '9px',
                       fontWeight: 700,
+                      color: isPV ? '#6b7280' : '#ffffff',
                       boxShadow: '0 0 0 3px #ffffff',
                     }}
-                    title={isPageView ? 'Page View' : 'Click'}
                   >
-                    {isPageView ? 'P' : 'C'}
+                    {isPV ? 'P' : 'C'}
                   </div>
 
-                  <div
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      padding: '0.75rem 1rem',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-                    }}
-                  >
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '0.25rem',
+                        alignItems: 'baseline',
+                        gap: '8px',
+                        fontSize: '13px',
                       }}
                     >
                       <span
                         style={{
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          color: isPageView ? '#2563eb' : '#059669',
+                          fontWeight: 500,
+                          color: '#111827',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
                         }}
                       >
-                        {isPageView ? 'Page View' : 'Click'}
+                        {ev.path || ev.url}
                       </span>
                       <span
                         style={{
-                          fontSize: '0.75rem',
-                          color: '#6b7280',
-                          fontFamily: 'monospace',
+                          color: '#d1d5db',
+                          fontSize: '12px',
+                          flexShrink: 0,
+                          fontVariantNumeric: 'tabular-nums',
                         }}
                       >
-                        {elapsed} ({new Date(event.ts).toLocaleTimeString()})
+                        {elapsed(t0, ev.ts)}
                       </span>
                     </div>
 
-                    <div
-                      style={{
-                        fontSize: '0.875rem',
-                        color: '#111827',
-                        wordBreak: 'break-all',
-                      }}
-                    >
-                      {event.path || event.url}
-                    </div>
-
-                    {!isPageView && (
+                    {!isPV && (
                       <div
                         style={{
-                          marginTop: '0.5rem',
-                          paddingTop: '0.5rem',
-                          borderTop: '1px dashed #f3f4f6',
-                          fontSize: '0.75rem',
-                          color: '#4b5563',
+                          marginTop: '4px',
+                          fontSize: '12px',
+                          color: '#9ca3af',
                           display: 'flex',
                           flexWrap: 'wrap',
-                          gap: '1rem',
+                          gap: '12px',
                         }}
                       >
-                        {event.x !== undefined && event.y !== undefined && (
-                          <div>
-                            <strong>Coords:</strong> ({event.x}, {event.y})
-                          </div>
+                        {ev.x !== undefined && ev.y !== undefined && (
+                          <span>
+                            {ev.x},{ev.y}
+                          </span>
                         )}
-                        {event.doc_w && event.doc_h && (
-                          <div>
-                            <strong>Doc:</strong> {event.doc_w} &times;{' '}
-                            {event.doc_h}
-                          </div>
+                        {ev.vw && ev.vh && (
+                          <span>
+                            {ev.vw}&times;{ev.vh}
+                          </span>
                         )}
-                        {event.vw && event.vh && (
-                          <div>
-                            <strong>Viewport:</strong> {event.vw} &times;{' '}
-                            {event.vh}
-                          </div>
-                        )}
-                        {event.sel && (
-                          <div>
-                            <strong>Target:</strong>{' '}
-                            <code
-                              style={{
-                                backgroundColor: '#f3f4f6',
-                                padding: '0.125rem 0.25rem',
-                                borderRadius: '3px',
-                              }}
-                            >
-                              {event.sel}
-                            </code>
-                          </div>
+                        {ev.sel && (
+                          <span
+                            style={{
+                              fontFamily:
+                                'ui-monospace, SFMono-Regular, Menlo, monospace',
+                              fontSize: '11px',
+                              color: '#6b7280',
+                            }}
+                          >
+                            {ev.sel}
+                          </span>
                         )}
                       </div>
                     )}

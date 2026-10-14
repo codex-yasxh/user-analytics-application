@@ -402,12 +402,14 @@ export function HeatmapView() {
                 ref={iframeRef}
                 src={iframeSrc}
                 title="Heatmap preview"
+                scrolling="no"
                 onLoad={handleIframeLoad}
                 style={{
                   width: `${referenceWidth}px`,
                   height: `${iframeHeight}px`,
                   border: 'none',
                   display: 'block',
+                  overflow: 'hidden',
                 }}
               />
             )}

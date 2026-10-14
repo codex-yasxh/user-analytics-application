@@ -15,5 +15,66 @@ services:
       retries: 5
       start_period: 5s
 
+  api:
+    image: node:22-slim
+    container_name: cf-api
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - '4000:4000'
+    environment:
+      MONGO_URL: mongodb://mongo:27017/cf
+      PORT: '4000'
+      DASHBOARD_ORIGIN: 'http://localhost:5173'
+      RATE_LIMIT_ENABLED: 'false'
+      LOG_LEVEL: info
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: >
+      sh -c "npm ci --ignore-scripts && npx tsx server/src/index.ts"
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:4000/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  dashboard:
+    image: node:22-slim
+    container_name: cf-dashboard
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_API_URL: http://localhost:4000
+    depends_on:
+      api:
+        condition: service_healthy
+    command: >
+      sh -c "npx vite --host 0.0.0.0 --port 5173"
+
+  seed:
+    image: node:22-slim
+    container_name: cf-seed
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    environment:
+      MONGO_URL: mongodb://mongo:27017/cf
+    depends_on:
+      api:
+        condition: service_healthy
+    command: >
+      sh -c "npx tsx scripts/sync-indexes.ts && npx tsx scripts/seed.ts"
+    restart: 'no'
+
 volumes:
   mongo-data:
+  node_modules:

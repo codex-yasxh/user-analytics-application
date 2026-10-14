@@ -15,6 +15,55 @@ import {
   WakingBanner,
 } from '../components/SharedStates.js';
 
+function HeatmapScaler({
+  referenceWidth,
+  children,
+}: {
+  referenceWidth: number;
+  children: React.ReactNode;
+}) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [innerHeight, setInnerHeight] = useState(0);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    const inner = innerRef.current;
+    if (!wrapper || !inner) return;
+    const observer = new ResizeObserver(() => {
+      const available = wrapper.clientWidth;
+      setScale(Math.min(1, available / referenceWidth));
+      setInnerHeight(inner.scrollHeight);
+    });
+    observer.observe(wrapper);
+    observer.observe(inner);
+    return () => observer.disconnect();
+  }, [referenceWidth]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      style={{
+        width: '100%',
+        height: scale < 1 ? `${innerHeight * scale}px` : undefined,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        ref={innerRef}
+        style={{
+          width: `${referenceWidth}px`,
+          transformOrigin: 'top left',
+          transform: scale < 1 ? `scale(${scale})` : undefined,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function displayPath(fullPath: string): string {
   try {
     return new URL(fullPath).pathname;
@@ -337,13 +386,7 @@ export function HeatmapView() {
       )}
 
       {selectedPath && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            overflowX: 'auto',
-          }}
-        >
+        <HeatmapScaler referenceWidth={referenceWidth}>
           <div
             style={{
               position: 'relative',
@@ -380,7 +423,7 @@ export function HeatmapView() {
               }}
             />
           </div>
-        </div>
+        </HeatmapScaler>
       )}
 
       {/* Top clicked elements */}

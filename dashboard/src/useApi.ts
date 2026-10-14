@@ -9,7 +9,14 @@ export interface UseApiResult<T> {
   reload: () => void;
 }
 
-export function useApi<T>(endpoint: string | null): UseApiResult<T> {
+export interface UseApiOptions {
+  retryOn404?: boolean;
+}
+
+export function useApi<T>(
+  endpoint: string | null,
+  options?: UseApiOptions,
+): UseApiResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(Boolean(endpoint));
   const [waking, setWaking] = useState<boolean>(false);
@@ -89,6 +96,19 @@ export function useApi<T>(endpoint: string | null): UseApiResult<T> {
         }
 
         // category === 'error' (4xx etc)
+        if (
+          response.status === 404 &&
+          options?.retryOn404 &&
+          Date.now() - startTimeRef.current < 15_000
+        ) {
+          if (!signal.aborted) {
+            setWaking(true);
+            setLoading(false);
+            retryTimeoutRef.current = window.setTimeout(fetchData, 2000);
+          }
+          return;
+        }
+
         let errMsg = `Request failed with status ${response.status}`;
         try {
           const errJson = await response.json();

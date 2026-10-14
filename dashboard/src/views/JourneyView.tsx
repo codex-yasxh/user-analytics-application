@@ -34,7 +34,7 @@ export function JourneyView() {
   const { id } = useParams<{ id: string }>();
   const endpoint = id ? `/api/sessions/${id}/events` : null;
   const { data, loading, waking, error, reload } =
-    useApi<SessionEventsResponse>(endpoint);
+    useApi<SessionEventsResponse>(endpoint, { retryOn404: true });
 
   const t0 =
     data && data.events.length > 0 ? new Date(data.events[0].ts).getTime() : 0;

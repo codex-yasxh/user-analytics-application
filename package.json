@@ -39,6 +39,9 @@
     "typescript-eslint": "8.71.2",
     "vitest": "5.0.4"
   },
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-gnu": "^1.2.13",
     "@rolldown/binding-win32-x64-msvc": "^1.2.13"

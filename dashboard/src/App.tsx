@@ -125,18 +125,60 @@ function App() {
             ))}
           </nav>
 
-          <div style={{ padding: '0 20px' }}>
+          <div style={{ padding: '0 8px' }}>
             <a
               href={`${DEMO_ORIGIN}/demo/home.html`}
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: '12px',
-                color: '#9ca3af',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '8px 12px',
+                borderRadius: '6px',
                 textDecoration: 'none',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#6b7280',
+                backgroundColor: 'transparent',
+                transition: 'background-color 0.15s',
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = '#f3f4f6')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = 'transparent')
+              }
             >
-              Open Demo Store &rarr;
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 3h12l-1.5 7H3.5L2 3z" />
+                <circle cx="6" cy="13" r="1" />
+                <circle cx="11" cy="13" r="1" />
+              </svg>
+              Demo Store
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginLeft: 'auto', opacity: 0.5 }}
+              >
+                <path d="M4 2h6v6" />
+                <path d="M10 2L3 9" />
+              </svg>
             </a>
           </div>
         </aside>

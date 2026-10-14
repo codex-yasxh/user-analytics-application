@@ -8,6 +8,15 @@ import {
   WakingBanner,
 } from '../components/SharedStates.js';
 
+function shortenPath(fullPath: string): string {
+  try {
+    const url = new URL(fullPath);
+    return url.pathname;
+  } catch {
+    return fullPath;
+  }
+}
+
 function timeAgo(isoDate: string): string {
   try {
     const sec = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
@@ -173,13 +182,13 @@ export function SessionsView() {
                     style={{
                       padding: '10px 12px',
                       color: '#6b7280',
-                      maxWidth: '280px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, Menlo, monospace',
+                      fontSize: '12px',
                     }}
+                    title={s.entry_path}
                   >
-                    {s.entry_path}
+                    {shortenPath(s.entry_path)}
                   </td>
                   <td
                     style={{

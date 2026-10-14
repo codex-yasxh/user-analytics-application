@@ -8,6 +8,14 @@ import {
   WakingBanner,
 } from '../components/SharedStates.js';
 
+function shortenPath(fullPath: string): string {
+  try {
+    return new URL(fullPath).pathname;
+  } catch {
+    return fullPath;
+  }
+}
+
 function elapsed(startTs: number, currentTs: string): string {
   try {
     const sec = Math.max(
@@ -169,7 +177,7 @@ export function JourneyView() {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        {ev.path || ev.url}
+                        {shortenPath(ev.path || ev.url)}
                       </span>
                       <span
                         style={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useApi } from '../useApi.js';
 import {
@@ -14,6 +14,14 @@ import {
   ErrorState,
   WakingBanner,
 } from '../components/SharedStates.js';
+
+function displayPath(fullPath: string): string {
+  try {
+    return new URL(fullPath).pathname;
+  } catch {
+    return fullPath;
+  }
+}
 
 const BUCKET_WIDTHS: Record<string, number> = {
   desktop: 1280,
@@ -235,7 +243,7 @@ export function HeatmapView() {
               <optgroup label="Demo Pages">
                 {renderablePages.map((p) => (
                   <option key={p.path} value={p.path}>
-                    {p.path} ({p.clicks})
+                    {displayPath(p.path)} ({p.clicks})
                   </option>
                 ))}
               </optgroup>
@@ -244,7 +252,7 @@ export function HeatmapView() {
               <optgroup label="External (data only)">
                 {otherPages.map((p) => (
                   <option key={p.path} value={p.path}>
-                    {p.path} ({p.clicks})
+                    {displayPath(p.path)} ({p.clicks})
                   </option>
                 ))}
               </optgroup>

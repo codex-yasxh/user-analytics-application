@@ -88,23 +88,9 @@ Dashboard: [localhost:5173](http://localhost:5173) · Demo Store: [localhost:517
 
 ## How It Works
 
-```
-Browser                    Vercel (static)              Render (API)           Atlas (DB)
-  │                            │                            │                      │
-  │── page load ──────────────>│ cf.js (2.3 KB)             │                      │
-  │<───────────────────────────│                            │                      │
-  │                            │                            │                      │
-  │── click / page_view ──────────────────────────────────>│                      │
-  │   (sendBeacon, text/plain to skip CORS preflight)      │                      │
-  │                            │                            │── insertMany ──────>│
-  │                            │                            │   (unordered,        │
-  │                            │                            │    eid dedup)        │
-  │                            │                            │                      │
-  │── dashboard ──────────────>│ React SPA                  │                      │
-  │<───────────────────────────│                            │                      │
-  │                            │── /api/sessions ──────────>│── aggregate ────────>│
-  │                            │<──────────────────────────│<─────────────────────│
-```
+<p align="center">
+  <img src="docs/architecture.svg" alt="CausalFunnel Architecture" width="800"/>
+</p>
 
 1. **Tracker** captures `page_view` and `click` events with page coordinates, viewport size, and a CSS selector
 2. **Queue** batches events (3s interval or 10-event threshold) and flushes via `sendBeacon` (text/plain to avoid CORS preflight)

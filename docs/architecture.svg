@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="Inter, -apple-system, system-ui, sans-serif">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.08"/>
+    </filter>
+    <linearGradient id="grad-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="grad-purple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="grad-amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="420" rx="12" fill="#f8fafc"/>
+  <rect x="0.5" y="0.5" width="899" height="419" rx="12" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Title -->
+  <text x="450" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="#334155" letter-spacing="0.5">DATA FLOW</text>
+
+  <!-- ═══ BROWSER BOX ═══ -->
+  <rect x="30" y="55" width="200" height="155" rx="10" fill="white" filter="url(#shadow)" stroke="#e2e8f0"/>
+  <rect x="30" y="55" width="200" height="32" rx="10" fill="url(#grad-blue)"/>
+  <rect x="30" y="77" width="200" height="10" fill="url(#grad-blue)"/>
+  <text x="130" y="77" text-anchor="middle" font-size="13" font-weight="600" fill="white">Browser</text>
+
+  <text x="50" y="112" font-size="11" fill="#475569">Page loads cf.js (2.3 KB)</text>
+  <text x="50" y="132" font-size="11" fill="#475569">Captures clicks + views</text>
+  <text x="50" y="152" font-size="11" fill="#475569">Queues → sendBeacon</text>
+  <text x="50" y="172" font-size="11" fill="#475569">text/plain (no preflight)</text>
+  <circle cx="52" cy="108" r="3" fill="#3b82f6"/>
+  <circle cx="52" cy="128" r="3" fill="#3b82f6"/>
+  <circle cx="52" cy="148" r="3" fill="#3b82f6"/>
+  <circle cx="52" cy="168" r="3" fill="#3b82f6"/>
+
+  <!-- ═══ VERCEL BOX ═══ -->
+  <rect x="30" y="240" width="200" height="135" rx="10" fill="white" filter="url(#shadow)" stroke="#e2e8f0"/>
+  <rect x="30" y="240" width="200" height="32" rx="10" fill="url(#grad-purple)"/>
+  <rect x="30" y="262" width="200" height="10" fill="url(#grad-purple)"/>
+  <text x="130" y="262" text-anchor="middle" font-size="13" font-weight="600" fill="white">Vercel (Static)</text>
+
+  <text x="50" y="297" font-size="11" fill="#475569">Dashboard (React 19)</text>
+  <text x="50" y="317" font-size="11" fill="#475569">Demo Store</text>
+  <text x="50" y="337" font-size="11" fill="#475569">cf.js tracker bundle</text>
+  <text x="50" y="357" font-size="11" fill="#475569">Always fast, no cold start</text>
+  <circle cx="52" cy="293" r="3" fill="#8b5cf6"/>
+  <circle cx="52" cy="313" r="3" fill="#8b5cf6"/>
+  <circle cx="52" cy="333" r="3" fill="#8b5cf6"/>
+  <circle cx="52" cy="353" r="3" fill="#8b5cf6"/>
+
+  <!-- ═══ API BOX ═══ -->
+  <rect x="350" y="55" width="200" height="200" rx="10" fill="white" filter="url(#shadow)" stroke="#e2e8f0"/>
+  <rect x="350" y="55" width="200" height="32" rx="10" fill="url(#grad-green)"/>
+  <rect x="350" y="77" width="200" height="10" fill="url(#grad-green)"/>
+  <text x="450" y="77" text-anchor="middle" font-size="13" font-weight="600" fill="white">Render (API)</text>
+
+  <text x="370" y="112" font-size="11" font-weight="500" fill="#374151">POST /api/events</text>
+  <text x="380" y="130" font-size="10" fill="#64748b">Zod validate → dedup → bulk insert</text>
+
+  <text x="370" y="155" font-size="11" font-weight="500" fill="#374151">GET /api/sessions</text>
+  <text x="380" y="173" font-size="10" fill="#64748b">Aggregation: group → sort → paginate</text>
+
+  <text x="370" y="198" font-size="11" font-weight="500" fill="#374151">GET /api/heatmap</text>
+  <text x="380" y="216" font-size="10" fill="#64748b">Filter by path + bucket → coordinates</text>
+
+  <text x="370" y="241" font-size="11" font-weight="500" fill="#374151">GET /api/elements</text>
+  <text x="380" y="241" font-size="10" fill="#64748b"></text>
+
+  <!-- ═══ DATABASE BOX ═══ -->
+  <rect x="670" y="55" width="200" height="155" rx="10" fill="white" filter="url(#shadow)" stroke="#e2e8f0"/>
+  <rect x="670" y="55" width="200" height="32" rx="10" fill="url(#grad-amber)"/>
+  <rect x="670" y="77" width="200" height="10" fill="url(#grad-amber)"/>
+  <text x="770" y="77" text-anchor="middle" font-size="13" font-weight="600" fill="white">Atlas (MongoDB)</text>
+
+  <text x="690" y="112" font-size="11" fill="#475569">events collection</text>
+  <text x="690" y="135" font-size="10" fill="#64748b">eid_unique index (dedup)</text>
+  <text x="690" y="153" font-size="10" fill="#64748b">session_ts_id (journey)</text>
+  <text x="690" y="171" font-size="10" fill="#64748b">heatmap_lookup (spatial)</text>
+  <text x="690" y="196" font-size="11" fill="#475569">Single collection design</text>
+  <circle cx="692" cy="108" r="3" fill="#f59e0b"/>
+  <circle cx="692" cy="192" r="3" fill="#f59e0b"/>
+
+  <!-- ═══ HEATMAP BOX ═══ -->
+  <rect x="350" y="290" width="200" height="85" rx="10" fill="white" filter="url(#shadow)" stroke="#e2e8f0"/>
+  <rect x="350" y="290" width="200" height="32" rx="10" fill="#1e293b"/>
+  <rect x="350" y="312" width="200" height="10" fill="#1e293b"/>
+  <text x="450" y="312" text-anchor="middle" font-size="13" font-weight="600" fill="white">Heatmap Renderer</text>
+
+  <text x="370" y="347" font-size="10" fill="#475569">iframe + canvas overlay</text>
+  <text x="370" y="363" font-size="10" fill="#475569">Independent X/Y scaling</text>
+  <text x="370" y="379" font-size="10" fill="#475569">Viewport buckets: 390 / 768 / 1280</text>
+
+  <!-- ═══ ARROWS ═══ -->
+
+  <!-- Browser → API: events -->
+  <path d="M 230 110 L 340 110" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)" stroke-dasharray="6 3"/>
+  <text x="285" y="102" text-anchor="middle" font-size="9" font-weight="500" fill="#3b82f6">events</text>
+
+  <!-- Browser ← Vercel: cf.js -->
+  <path d="M 130 210 L 130 232" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4 3"/>
+  <text x="148" y="225" font-size="9" fill="#8b5cf6">cf.js</text>
+
+  <!-- API → DB -->
+  <path d="M 550 110 L 660 110" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="605" y="102" text-anchor="middle" font-size="9" font-weight="500" fill="#10b981">write</text>
+
+  <!-- API ← DB: read -->
+  <path d="M 660 170 L 550 170" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="605" y="163" text-anchor="middle" font-size="9" font-weight="500" fill="#94a3b8">read</text>
+
+  <!-- Vercel → API: dashboard queries -->
+  <path d="M 230 310 C 290 310 290 190 340 190" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4 3"/>
+  <text x="270" y="245" font-size="9" fill="#64748b" transform="rotate(-40, 270, 245)">API queries</text>
+
+  <!-- API → Heatmap -->
+  <path d="M 450 255 L 450 282" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="466" y="272" font-size="9" fill="#64748b">coords</text>
+
+  <!-- ═══ LABELS ═══ -->
+  <text x="450" y="406" text-anchor="middle" font-size="10" fill="#94a3b8">Tracker → sendBeacon → Ingest → MongoDB → Dashboard → Heatmap</text>
+</svg>

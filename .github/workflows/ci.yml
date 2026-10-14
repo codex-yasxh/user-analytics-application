@@ -48,3 +48,36 @@ jobs:
 
       - name: Run check
         run: npm run check
+
+      - name: Build tracker and check gzip budget
+        run: |
+          npm run --workspace=@cf/tracker build
+          node -e "
+            const fs = require('fs');
+            const zlib = require('zlib');
+            const raw = fs.readFileSync('dashboard/public/cf.js');
+            const gz = zlib.gzipSync(raw).length;
+            console.log('cf.js raw: ' + raw.length + ' bytes, gzip: ' + gz + ' bytes');
+            if (gz > 5120) { console.error('FAIL: cf.js gzip exceeds 5 KB budget'); process.exit(1); }
+          "
+
+  fresh-clone:
+    name: Fresh clone
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install from lockfile
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build tracker
+        run: npm run --workspace=@cf/tracker build

@@ -20,6 +20,7 @@
     "db:sync": "tsx scripts/sync-indexes.ts",
     "copy-demo": "tsx scripts/copy-demo.ts",
     "seed": "tsx scripts/seed.ts",
+    "explain": "tsx scripts/explain.ts",
     "build": "npm run build -w @cf/tracker && npm run copy-demo && npm run build -w @cf/dashboard",
     "dev": "npm run copy-demo && concurrently -k \"npx tsx watch --env-file=.env server/src/index.ts\" \"npm run dev -w @cf/dashboard\" \"npx tsx watch --include tracker/src/index.ts tracker/build.ts\""
   },

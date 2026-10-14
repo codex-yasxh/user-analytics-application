@@ -1,0 +1,36 @@
+name: Hosted smoke test
+
+on:
+  workflow_dispatch:
+
+env:
+  API_URL: https://user-analytics-application-causalfunnel.onrender.com
+
+jobs:
+  smoke:
+    name: Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health check
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' "$API_URL/health")
+          echo "GET /health -> $status"
+          [ "$status" = "200" ]
+
+      - name: Readiness check
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' "$API_URL/ready")
+          echo "GET /ready -> $status"
+          [ "$status" = "200" ]
+
+      - name: Sessions read
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' "$API_URL/api/sessions")
+          echo "GET /api/sessions -> $status"
+          [ "$status" = "200" ]
+
+      - name: Pages read
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' "$API_URL/api/pages")
+          echo "GET /api/pages -> $status"
+          [ "$status" = "200" ]
